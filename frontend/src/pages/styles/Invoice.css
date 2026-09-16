@@ -1,0 +1,271 @@
+/* Invoice Modal Overlay */
+.invoice-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+/* Modal Content */
+.invoice-modal-content {
+  background: #ffffff;
+  width: 100%;
+  max-width: 550px;
+  border-radius: 16px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+}
+
+/* Header */
+.invoice-modal-header {
+  padding: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.invoice-header-titles {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.invoice-header-titles .icon-wrapper {
+  background: #fff7ed;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.invoice-header-titles h2 {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.invoice-header-titles p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.invoice-close-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.invoice-close-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* Body / Document */
+.invoice-modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.invoice-document-wrapper {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1px;
+}
+
+.invoice-document {
+  background: #fff;
+  border-radius: 11px;
+  padding: 24px;
+}
+
+/* Document Brand Header */
+.doc-brand-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+  padding-bottom: 24px;
+  border-bottom: 1px dashed #cbd5e1;
+}
+
+.doc-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.doc-logo {
+  background: #fff7ed;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+}
+
+.doc-brand h3 {
+  margin: 0 0 4px;
+  font-size: 1.1rem;
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.doc-brand p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.doc-meta {
+  text-align: right;
+}
+
+.meta-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.meta-row:last-child {
+  margin-bottom: 0;
+}
+
+.meta-row span {
+  font-size: 0.75rem;
+  color: #ea580c;
+  font-weight: 600;
+}
+
+.meta-row strong {
+  font-size: 0.85rem;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* Document Sections */
+.doc-section {
+  margin-bottom: 24px;
+}
+
+.doc-section-title {
+  color: #9a3412;
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.doc-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.doc-grid-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: 0.9rem;
+}
+
+.doc-grid-row span {
+  color: #64748b;
+}
+
+.doc-grid-row strong {
+  color: #0f172a;
+  font-weight: 600;
+  text-align: right;
+}
+
+.doc-services-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.doc-services-list li {
+  font-size: 0.9rem;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Cost Summary Highlight */
+.doc-cost-section {
+  margin-bottom: 0;
+  padding-top: 16px;
+  border-top: 1px dashed #cbd5e1;
+}
+
+.highlight-advance span,
+.highlight-advance strong {
+  color: #ea580c;
+  font-weight: 700;
+}
+
+/* Footer Actions */
+.invoice-actions-footer {
+  padding: 0 24px;
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.invoice-btn-outline {
+  flex: 1;
+  background: transparent;
+  border: 1px solid #fdba74;
+  color: #9a3412;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.invoice-btn-outline:hover {
+  background: #fff7ed;
+}
+
+.invoice-btn-outline:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.invoice-footer-note {
+  background: #f8fafc;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.invoice-footer-note span {
+  font-size: 0.8rem;
+  color: #64748b;
+}

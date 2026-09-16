@@ -1,0 +1,12 @@
+◇ injected env (12) from .env // tip: ⌁ auth for agents [www.vestauth.com]
+◇ injected env (0) from .env // tip: ⌘ override existing { override: true }
+◇ injected env (0) from .env // tip: ◈ secrets for agents [www.dotenvx.com]
+Server running on port 5000
+Mongoose connected
+MongoDB Connected
+Mongoose disconnected
+Mongoose connected
+Mongoose disconnected
+Mongoose connected
+Mongoose disconnected
+Mongoose connected

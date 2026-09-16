@@ -1,0 +1,117 @@
+.booking-stepper-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.stepper-header {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: white;
+  padding: 2rem;
+}
+
+.package-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.package-info h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.package-info .price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.progress-container p {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.progress-bar-wrapper {
+  height: 6px;
+  background: #334155;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #38bdf8;
+  transition: width 0.3s ease;
+}
+
+.step-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.step-labels span.active {
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+.step-labels span.completed {
+  color: #e2e8f0;
+}
+
+.step-content {
+  padding: 2rem;
+  min-height: 400px;
+}
+
+/* Common Step Styles */
+.step-wrapper h3 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+  font-size: 1.5rem;
+}
+
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.btn-prev, .btn-next {
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.btn-prev {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.btn-prev:hover {
+  background: #e2e8f0;
+}
+
+.btn-next {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-next:hover {
+  background: #2563eb;
+}

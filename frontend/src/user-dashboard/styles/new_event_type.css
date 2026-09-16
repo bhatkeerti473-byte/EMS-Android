@@ -1,0 +1,238 @@
+/* --- New Event Type Styles --- */
+
+.section-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.section-title-new {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+.view-all-btn {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.trending-events-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  position: relative;
+}
+.t-event-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.t-event-img-wrap {
+  height: 160px;
+  position: relative;
+}
+.t-event-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.t-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #ea580c;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.t-event-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  flex: 1;
+}
+.t-event-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -24px;
+  left: 20px;
+  border: 4px solid white;
+}
+.t-event-text {
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+.t-event-text h4 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.t-event-text p {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.5;
+}
+.t-event-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+.btn-outline-sm, .btn-solid-sm {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.btn-outline-sm {
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+.btn-outline-sm:hover {
+  background: #f8fafc;
+  border-color: #94a3b8;
+}
+.btn-solid-sm {
+  background: #ea580c;
+  border: 1px solid #ea580c;
+  color: white;
+}
+.btn-solid-sm:hover {
+  background: #c2410c;
+}
+
+.all-events-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+}
+.a-event-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.a-event-img-wrap {
+  height: 100px;
+}
+.a-event-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.a-event-content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  flex: 1;
+}
+.a-event-icon-small {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -16px;
+  left: 12px;
+  border: 3px solid white;
+}
+.a-event-title {
+  margin: 16px 0 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.a-event-actions {
+  display: flex;
+  gap: 8px;
+}
+.btn-outline-xs, .btn-solid-xs {
+  flex: 1;
+  padding: 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.btn-outline-xs {
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+}
+.btn-outline-xs:hover {
+  background: #f8fafc;
+}
+.btn-solid-xs {
+  background: #ea580c;
+  border: 1px solid #ea580c;
+  color: white;
+}
+.btn-solid-xs:hover {
+  background: #c2410c;
+}
+
+.custom-event-banner-new {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 24px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.banner-icon-bg-new {
+  width: 48px;
+  height: 48px;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+.custom-event-banner-new h4 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.custom-event-banner-new p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+}

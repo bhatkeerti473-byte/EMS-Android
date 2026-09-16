@@ -1,0 +1,7 @@
+export const DEFAULT_EVENT_IMAGE =
+  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 500'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%230f172a'/><stop offset='55%' stop-color='%231d4ed8'/><stop offset='100%' stop-color='%23ea580c'/></linearGradient></defs><rect width='800' height='500' fill='url(%23g)'/><circle cx='640' cy='120' r='72' fill='%23ffffff' fill-opacity='.12'/><rect x='72' y='90' width='310' height='28' rx='14' fill='%23ffffff' fill-opacity='.9'/><rect x='72' y='132' width='220' height='18' rx='9' fill='%23ffffff' fill-opacity='.7'/><rect x='72' y='346' width='520' height='26' rx='13' fill='%23ffffff' fill-opacity='.85'/><rect x='72' y='384' width='420' height='18' rx='9' fill='%23ffffff' fill-opacity='.55'/><circle cx='148' cy='258' r='92' fill='%23ffffff' fill-opacity='.15'/><path d='M114 284l36-48 34 30 48-64 70 96H114z' fill='%23ffffff' fill-opacity='.78'/><rect x='560' y='80' width='168' height='260' rx='28' fill='%23ffffff' fill-opacity='.12'/><rect x='586' y='108' width='116' height='18' rx='9' fill='%23ffffff' fill-opacity='.78'/><rect x='586' y='140' width='92' height='14' rx='7' fill='%23ffffff' fill-opacity='.55'/><rect x='586' y='176' width='120' height='14' rx='7' fill='%23ffffff' fill-opacity='.55'/><rect x='586' y='212' width='76' height='14' rx='7' fill='%23ffffff' fill-opacity='.55'/></svg>";
+
+export const handleImageError = (event) => {
+  event.currentTarget.onerror = null;
+  event.currentTarget.src = DEFAULT_EVENT_IMAGE;
+};

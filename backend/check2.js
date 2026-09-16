@@ -1,0 +1,1 @@
+require('dotenv').config({path: './.env'}); const mongoose = require('mongoose'); mongoose.connect(process.env.MONGO_URI).then(() = new mongoose.Types.ObjectId('6A4781DFCB9DDDE4962E9605')})).then(console.log).finally(() = 

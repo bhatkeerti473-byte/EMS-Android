@@ -1,0 +1,237 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Sidebar from '../styles/components/Sidebar';
+import Topbar from '../styles/components/Topbar';
+import { Send, Bot, User, MapPin, Users, Calendar, PlusCircle, CheckCircle, ArrowRight } from 'lucide-react';
+
+const SmartAssistant = () => {
+    const navigate = useNavigate();
+    const [messages, setMessages] = useState([
+        { 
+            sender: 'assistant', 
+            text: "Hi! I'm your Smart Event Assistant. I can help you plan your event, find suitable venues and services, compare options and stay within your budget.\n\nExample: 'Plan a wedding on 14 February for 200 guests within ₹2 lakh.'" 
+        }
+    ]);
+    const [input, setInput] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [context, setContext] = useState({});
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const handleSend = async (textOverride) => {
+        const textToSubmit = textOverride || input;
+        if (!textToSubmit.trim()) return;
+
+        // Add user message
+        const newMessages = [...messages, { sender: 'user', text: textToSubmit }];
+        setMessages(newMessages);
+        setInput('');
+        setIsLoading(true);
+
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('http://localhost:5000/api/assistant/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ message: textToSubmit, context })
+            });
+
+            const data = await res.json();
+            
+            if (data.success) {
+                setContext(data.context);
+                
+                const assistantMsg = { 
+                    sender: 'assistant', 
+                    text: data.reply,
+                    recommendations: data.recommendations
+                };
+                
+                setMessages(prev => [...prev, assistantMsg]);
+            } else {
+                setMessages(prev => [...prev, { sender: 'assistant', text: "Sorry, I'm having trouble processing that right now." }]);
+            }
+        } catch (error) {
+            console.error("Chat Error:", error);
+            setMessages(prev => [...prev, { sender: 'assistant', text: "Network error connecting to the assistant." }]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleUseThisPlan = (rec) => {
+        // Pre-fill localStorage as per booking wizard
+        localStorage.setItem("booking_event_type_title", context.eventType || "Custom Event");
+        if(context.dateStr) localStorage.setItem("booking_event_date", context.dateStr);
+        if(context.guests) localStorage.setItem("booking_guest_count", context.guests);
+        
+        if (rec.type === 'VenuePlan' || rec.type === 'Package') {
+            localStorage.setItem("booking_venue_id", rec.id || "V-001");
+            localStorage.setItem("booking_venue_name", rec.name || "Selected Venue");
+            localStorage.setItem("booking_venue_location", rec.location || "Selected Location");
+            localStorage.setItem("booking_venue_price", rec.venuePrice || rec.price || 0);
+            
+            if(rec.cateringCost) {
+                localStorage.setItem("booking_catering_combo_name", "Assistant Suggested Combo");
+                localStorage.setItem("booking_catering_price_per_plate", 450); 
+                localStorage.setItem("booking_food_type", "veg");
+            }
+            if(rec.decorationCost) {
+                localStorage.setItem("booking_decoration_package", "Assistant Suggested Decoration");
+                localStorage.setItem("booking_decoration_total", rec.decorationCost);
+            }
+            if(rec.otherCost) {
+                localStorage.setItem("booking_room_total", rec.otherCost);
+            }
+        }
+        
+        // Navigate to booking summary
+        navigate("/client/summary");
+    };
+
+    const quickActions = [
+        "Find a wedding hall",
+        "Plan within ₹2 lakh",
+        "Show food options",
+        "Find available venues",
+        "Make my plan cheaper",
+        "Plan a complete event"
+    ];
+
+    return (
+        <div className="flex h-screen bg-gray-50">
+            <Sidebar />
+            <div className="flex-1 flex flex-col h-screen overflow-hidden">
+                <Topbar title="Smart Event Assistant" />
+                
+                <div className="flex-1 flex flex-col max-w-4xl w-full mx-auto p-4 md:p-6 overflow-hidden">
+                    
+                    {/* Chat Window */}
+                    <div className="flex-1 overflow-y-auto bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4 flex flex-col gap-4">
+                        {messages.map((msg, idx) => (
+                            <div key={idx} className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                {msg.sender === 'assistant' && (
+                                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <Bot size={18} className="text-blue-600" />
+                                    </div>
+                                )}
+                                
+                                <div className={`flex flex-col max-w-[80%] ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
+                                    <div className={`p-3 rounded-2xl ${msg.sender === 'user' ? 'bg-orange-600 text-white rounded-tr-none' : 'bg-gray-100 text-gray-800 rounded-tl-none'}`}>
+                                        <p className="whitespace-pre-wrap text-sm">{msg.text}</p>
+                                    </div>
+
+                                    {/* Recommendations Cards */}
+                                    {msg.recommendations && msg.recommendations.length > 0 && (
+                                        <div className="mt-3 flex gap-3 overflow-x-auto pb-2 max-w-full">
+                                            {msg.recommendations.map((rec, i) => (
+                                                <div key={i} className="flex-shrink-0 w-64 bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                                                    <div className="h-32 w-full overflow-hidden relative">
+                                                        <img src={rec.image} alt={rec.name} className="w-full h-full object-cover" />
+                                                        <div className="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded text-xs font-bold text-orange-600">
+                                                            Score: {rec.score}%
+                                                        </div>
+                                                    </div>
+                                                    <div className="p-3">
+                                                        <h4 className="font-bold text-sm text-gray-900 truncate">{rec.name}</h4>
+                                                        {rec.location && <div className="flex items-center text-xs text-gray-500 mt-1"><MapPin size={12} className="mr-1"/> {rec.location}</div>}
+                                                        
+                                                        <div className="flex gap-2 mt-2">
+                                                            <div className="flex items-center text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-600"><Users size={12} className="mr-1"/> {rec.capacity}</div>
+                                                            <div className="flex items-center text-xs bg-green-50 px-1.5 py-0.5 rounded text-green-700"><CheckCircle size={12} className="mr-1"/> {rec.availability}</div>
+                                                        </div>
+
+                                                        <div className="mt-3 pt-3 border-t border-gray-100">
+                                                            <div className="flex justify-between items-end mb-3">
+                                                                <div className="text-xs text-gray-500">Est. Total</div>
+                                                                <div className="font-bold text-orange-600">₹{rec.price?.toLocaleString()}</div>
+                                                            </div>
+                                                            
+                                                            <div className="flex gap-2">
+                                                                <button className="flex-1 text-xs py-1.5 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition-colors">Details</button>
+                                                                <button 
+                                                                    onClick={() => handleUseThisPlan(rec)}
+                                                                    className="flex-1 text-xs py-1.5 bg-orange-600 text-white rounded-md font-medium hover:bg-orange-700 transition-colors flex items-center justify-center gap-1">
+                                                                    Use Plan <ArrowRight size={12}/>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {msg.sender === 'user' && (
+                                    <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0 mt-1">
+                                        <User size={18} className="text-orange-600" />
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                        {isLoading && (
+                            <div className="flex gap-3 justify-start">
+                                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center mt-1">
+                                    <Bot size={18} className="text-blue-600" />
+                                </div>
+                                <div className="p-3 rounded-2xl bg-gray-100 text-gray-800 rounded-tl-none flex gap-1 items-center">
+                                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                    <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                                </div>
+                            </div>
+                        )}
+                        <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* Quick Actions */}
+                    <div className="flex gap-2 overflow-x-auto pb-3 no-scrollbar shrink-0">
+                        {quickActions.map((action, i) => (
+                            <button 
+                                key={i}
+                                onClick={() => handleSend(action)}
+                                className="whitespace-nowrap px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-medium text-gray-600 hover:bg-orange-50 hover:text-orange-600 hover:border-orange-200 transition-colors flex items-center gap-1"
+                            >
+                                <PlusCircle size={12}/>
+                                {action}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Input Area */}
+                    <div className="bg-white p-2 rounded-xl shadow-sm border border-gray-200 flex gap-2 shrink-0">
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                            placeholder="Type here (e.g., 'Plan a wedding for 200 guests under 2 lakhs')..."
+                            className="flex-1 bg-transparent border-none outline-none px-3 text-sm"
+                        />
+                        <button 
+                            onClick={() => handleSend()}
+                            disabled={!input.trim() || isLoading}
+                            className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${!input.trim() || isLoading ? 'bg-gray-100 text-gray-400' : 'bg-orange-600 text-white hover:bg-orange-700'}`}
+                        >
+                            <Send size={18} />
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default SmartAssistant;

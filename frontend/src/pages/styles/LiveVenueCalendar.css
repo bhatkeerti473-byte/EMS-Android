@@ -1,0 +1,297 @@
+/* LiveVenueCalendar.css */
+
+.live-calendar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.live-calendar-main {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(320px, 1.2fr);
+  gap: 32px;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .live-calendar-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* -- Left Side: Calendar Grid -- */
+.calendar-card-ui {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.03);
+}
+
+.calendar-header-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.calendar-header-nav button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.calendar-header-nav button:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.calendar-header-nav h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.calendar-day-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 12px;
+}
+
+.calendar-day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #334155;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  position: relative;
+}
+
+.calendar-day-cell:hover:not(.past-date) {
+  background: #f8fafc;
+}
+
+.calendar-day-cell.past-date {
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.calendar-day-cell.selected-date {
+  background: #7c3aed;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.calendar-day-cell.status-available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.calendar-day-cell.status-partial {
+  background: #fef9c3;
+  color: #854d0e;
+  border: 1px dashed #ca8a04;
+}
+
+.calendar-day-cell.status-full {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* -- Right Side: Overview -- */
+.overview-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.overview-header h3 {
+  margin: 0 0 16px;
+  font-size: 1.1rem;
+  color: #0f172a;
+}
+
+.availability-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: #f0fdf4;
+  border: 1px solid #dcfce7;
+}
+
+.availability-alert .alert-icon {
+  color: #16a34a;
+  margin-top: 2px;
+}
+
+.availability-alert .alert-content h4 {
+  margin: 0 0 4px;
+  color: #166534;
+  font-size: 1.05rem;
+}
+
+.availability-alert .alert-content p {
+  margin: 0;
+  color: #15803d;
+  font-size: 0.9rem;
+}
+
+.availability-alert .alert-badge {
+  margin-left: auto;
+  background: #dcfce7;
+  color: #166534;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid #bbf7d0;
+}
+
+.availability-alert.alert-error {
+  background: #fef2f2;
+  border-color: #fee2e2;
+}
+.availability-alert.alert-error .alert-icon {
+  color: #dc2626;
+}
+.availability-alert.alert-error .alert-content h4 {
+  color: #991b1b;
+}
+.availability-alert.alert-error .alert-content p {
+  color: #b91c1c;
+}
+.availability-alert.alert-error .alert-badge {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+.slot-overview-list {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
+  display: flex;
+  flex-direction: column;
+}
+
+.slot-overview-list-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.slot-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f8fafc;
+}
+
+.slot-item:last-child {
+  border-bottom: none;
+}
+
+.slot-item-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.slot-item-info strong {
+  color: #334155;
+  font-size: 0.95rem;
+}
+
+.slot-item-info span {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.slot-badge {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.slot-badge.available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.slot-badge.unavailable {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* -- Legend -- */
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.legend-color.available { background: #dcfce7; }
+.legend-color.partial { background: #fef9c3; border: 1px dashed #ca8a04; }
+.legend-color.full { background: #fee2e2; }
+.legend-color.selected { background: #7c3aed; border-radius: 50%; }
+.legend-color.past { background: #f1f5f9; border-radius: 50%; }
+
+.calendar-meta {
+  width: 100%;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  color: #64748b;
+  font-size: 0.8rem;
+  margin-top: 12px;
+}

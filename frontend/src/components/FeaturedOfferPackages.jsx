@@ -1,0 +1,2922 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Sparkles,
+  CheckCircle2,
+  Users,
+  Building,
+  Flower2,
+  Utensils,
+  Camera,
+  Music,
+  Car,
+  Home as HomeIcon,
+  Tag,
+  ArrowRight,
+  X,
+  Info,
+  ChevronRight,
+  ChevronLeft,
+  MapPin,
+  Calendar as CalendarIcon,
+  ShieldCheck,
+  Check,
+  Search,
+  Star,
+  AlertTriangle,
+  CreditCard,
+  Eye
+} from "lucide-react";
+import "../user-dashboard/styles/Decoration.css";
+import { Clock } from "lucide-react";
+
+// Countdown Hook
+const useCountdown = (targetDate) => {
+  const countDownDate = new Date(targetDate).getTime();
+  const [countDown, setCountDown] = useState(countDownDate - new Date().getTime());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const remaining = countDownDate - new Date().getTime();
+      setCountDown(remaining > 0 ? remaining : 0);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [countDownDate]);
+
+  return getReturnValues(countDown);
+};
+
+const getReturnValues = (countDown) => {
+  const days = Math.floor(countDown / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((countDown % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((countDown % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((countDown % (1000 * 60)) / 1000);
+  return [days, hours, minutes, seconds];
+};
+
+const CountdownTimer = ({ targetDate }) => {
+  const [days, hours, minutes, seconds] = useCountdown(targetDate);
+  const isExpired = days === 0 && hours === 0 && minutes === 0 && seconds === 0;
+
+  if (isExpired) return <span className="font-bold text-red-500">Offer Expired</span>;
+
+  return (
+    <span className="font-bold font-mono tracking-wider">
+      {days}D {hours.toString().padStart(2, '0')}H {minutes.toString().padStart(2, '0')}M {seconds.toString().padStart(2, '0')}S
+    </span>
+  );
+};
+
+export const statesList = ["Karnataka", "Maharashtra", "Tamil Nadu", "Telangana"];
+
+export const citiesMap = {
+  Karnataka: ["Udupi", "Bengaluru", "Mangalore", "Mysuru"],
+  Maharashtra: ["Mumbai", "Pune"],
+  "Tamil Nadu": ["Chennai"],
+  Telangana: ["Hyderabad"]
+};
+
+export const areasMap = {
+  Udupi: ["Manipal", "Kunjibettu", "Kapu Beach", "Malpe"],
+  Bengaluru: ["Whitefield", "Indiranagar", "Koramangala", "Jayanagar", "HSR Layout"],
+  Mangalore: ["Ocean View", "Bejai", "Kadri", "Panambur"],
+  Mysuru: ["Gokulam", "VV Puram"],
+  Mumbai: ["Bandra", "Juhu"],
+  Pune: ["Koregaon Park"],
+  Chennai: ["Anna Nagar"],
+  Hyderabad: ["Banjara Hills", "Gachibowli"]
+};
+
+// Comprehensive Venue Data for Udupi, Bengaluru, Mangalore & More
+export const availableVenuesData = [
+  // Udupi Venues
+  {
+    id: "v_udupi_royal",
+    name: "Udupi Royal Ocean Palace",
+    city: "Udupi",
+    area: "Manipal",
+    type: "AC Luxury Hall",
+    capacity: "600 Guests",
+    parking: "Ample Parking Space (150+ Cars)",
+    rooms: "10 Sea View Deluxe Guest Rooms",
+    rating: "4.9",
+    img: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=600&q=80",
+    features: [
+      "Centralized AC Banquet Hall",
+      "Grand Stage with Pro Lighting Rig",
+      "Dedicated Buffet Catering Area",
+      "High-power DJ & Sound Setup",
+      "Bridal & Groom Dressing Rooms",
+      "24/7 Power Generator Backup",
+      "Valet Parking Service"
+    ]
+  },
+  {
+    id: "v_udupi_amani",
+    name: "Amani Ramani Convention Centre",
+    city: "Udupi",
+    area: "Kunjibettu",
+    type: "Grand AC / Non-AC Hall",
+    capacity: "400 Guests",
+    parking: "Private Gated Parking",
+    rooms: "4 Deluxe Dressing Rooms",
+    rating: "4.8",
+    img: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=600&q=80",
+    features: [
+      "Spacious Pillar-less Hall",
+      "Traditional & Modern Stage Options",
+      "Covered Dining Area for 300 Pax",
+      "In-house Audio System",
+      "AC AC Dressing Rooms",
+      "Clean Restrooms & Security"
+    ]
+  },
+  {
+    id: "v_udupi_kapu",
+    name: "Kapu Beach Lawn Resort",
+    city: "Udupi",
+    area: "Kapu Beach",
+    type: "Outdoor Beachfront Lawn",
+    capacity: "800 Guests",
+    parking: "Beachside Parking Area",
+    rooms: "6 Luxury Beach Villas",
+    rating: "4.9",
+    img: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=600&q=80",
+    features: [
+      "Open-air Scenic Sea View Lawn",
+      "Fairy Light Ceiling Canopy",
+      "Live Barbeque & Mocktail Counters",
+      "Beach Entry Mandap Spot",
+      "Beach Villa Accommodation",
+      "Sound & DJ Truss Stage"
+    ]
+  },
+  {
+    id: "v_udupi_malpe",
+    name: "Malpe Sea Breeze Hall",
+    city: "Udupi",
+    area: "Malpe",
+    type: "AC Banquet Hall",
+    capacity: "500 Guests",
+    parking: "Valet Parking",
+    rooms: "Ocean View Guest Rooms",
+    rating: "4.7",
+    img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=600&q=80",
+    features: [
+      "Fully Air-conditioned Ocean View Hall",
+      "LED Stage Backdrop",
+      "Multi-Catering Kitchen & Buffet Zone",
+      "Audio-Visual Equipment",
+      "Guest Accommodation Rooms"
+    ]
+  },
+
+  // Bengaluru Venues
+  {
+    id: "v_bengaluru_royal",
+    name: "Royal Grand Palace",
+    city: "Bengaluru",
+    area: "Whitefield",
+    type: "AC Hall",
+    capacity: "500 Guests",
+    parking: "Parking Available (200 Cars)",
+    rooms: "12 Luxury Guest Rooms",
+    rating: "4.9",
+    img: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=600&q=80",
+    features: [
+      "Royal Palace Architecture",
+      "Crystal Chandelier Stage Lighting",
+      "500 Pax Buffet Dining Hall",
+      "Concert Grade DJ & Moving Heads",
+      "2 Deluxe Suites included",
+      "Valet Parking & Security"
+    ]
+  },
+  {
+    id: "v_bengaluru_golden",
+    name: "Golden Banquet Hall",
+    city: "Bengaluru",
+    area: "Indiranagar",
+    type: "Non-AC / AC Hall",
+    capacity: "300 Guests",
+    parking: "Valet Parking Available",
+    rooms: "Dressing Rooms Available",
+    rating: "4.7",
+    img: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=600&q=80",
+    features: [
+      "Modern Interior Decor",
+      "Compact Party Stage",
+      "Air Conditioned Dining Space",
+      "Background Music System",
+      "Elevator & Wheelchair Access"
+    ]
+  },
+  {
+    id: "v_bengaluru_green",
+    name: "Green Garden Resort",
+    city: "Bengaluru",
+    area: "Koramangala",
+    type: "Outdoor Lawn",
+    capacity: "1000 Guests",
+    parking: "Ample Lawn Parking",
+    rooms: "Luxury Cottages",
+    rating: "4.8",
+    img: "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=600&q=80",
+    features: [
+      "Lush Greenery Lawn Environment",
+      "Outdoor Floating Stage",
+      "Live Chaat & Bar Counters",
+      "Fairy String Illumination",
+      "Private Resort Cottages"
+    ]
+  },
+  {
+    id: "v_bengaluru_skyline",
+    name: "Skyline Convention Hall",
+    city: "Bengaluru",
+    area: "Whitefield",
+    type: "Grand AC Ballroom",
+    capacity: "800 Guests",
+    parking: "Underground Parking",
+    rooms: "VIP Executive Suites",
+    rating: "4.9",
+    img: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=600&q=80",
+    features: [
+      "High Ceiling AC Ballroom",
+      "LED Screen Backdrop",
+      "Pro Sound & Truss System",
+      "VIP Executive Lounge",
+      "Full Power Backup"
+    ]
+  },
+
+  // Mangalore Venues
+  {
+    id: "v_mangalore_heritage",
+    name: "Mangalore Heritage Convention",
+    city: "Mangalore",
+    area: "Bejai",
+    type: "Grand AC Ballroom",
+    capacity: "750 Guests",
+    parking: "Underground Parking",
+    rooms: "Suite Rooms Available",
+    rating: "4.8",
+    img: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
+    features: [
+      "Heritage Coastal Design",
+      "Grand Stage & Lighting",
+      "Dining Capacity for 500 Pax",
+      "AC Guest Suite Rooms",
+      "Ample Underground Parking"
+    ]
+  },
+  {
+    id: "v_mangalore_ocean",
+    name: "Ocean View Celebration Hall",
+    city: "Mangalore",
+    area: "Ocean View",
+    type: "AC Banquet",
+    capacity: "500 Guests",
+    parking: "Valet Parking",
+    rooms: "Sea View Rooms",
+    rating: "4.7",
+    img: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=600&q=80",
+    features: [
+      "Sea Facing Glass Walls",
+      "Modern Sound & DJ Rig",
+      "Multi-Catering Kitchen",
+      "Dressing Rooms"
+    ]
+  }
+];
+
+export const featuredPackagesData = [
+  {
+    id: "royal_wedding_pkg",
+    title: "Royal Wedding Package",
+    badge: "Save ₹35,000 🔥",
+    badgeBg: "#fee2e2",
+    badgeColor: "#dc2626",
+    eventType: "Wedding",
+    price: 450000,
+    priceStr: "₹4,50,000",
+    originalPrice: "₹4,85,000",
+    offerEndDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000 + 20 * 60 * 60 * 1000), // 15 Days, 20 Hours from now
+    guests: "500 Guests",
+    img: "/decorations/decor_royal_gold.jpg",
+    gallery: [
+      "/decorations/decor_royal_gold.jpg",
+      "/decorations/decor_grand_ballroom.jpg",
+      "/decorations/decor_floral_pink.png"
+    ],
+    includedServices: [
+      "Wedding Event",
+      "Luxury AC Venue",
+      "Royal Decoration",
+      "Veg + Non-Veg Catering",
+      "Photography",
+      "Videography",
+      "Premium DJ",
+      "Luxury Car",
+      "Guest Rooms",
+      "Seating Arrangement"
+    ],
+    originalDiscount: 35000,
+    serviceCosts: {
+      "Wedding Event": 5000,
+      "Luxury AC Venue": 200000,
+      "Royal Decoration": 90000,
+      "Veg + Non-Veg Catering": 120000,
+      "Photography": 25000,
+      "Videography": 20000,
+      "Premium DJ": 10000,
+      "Luxury Car": 5000,
+      "Guest Rooms": 5000,
+      "Seating Arrangement": 5000
+    },
+    priceBreakdown: [
+      { item: "Venue (Selected AC Hall)", cost: "₹2,00,000" },
+      { item: "Royal Decoration (Fresh Flowers)", cost: "₹90,000" },
+      { item: "Veg + Non-Veg Catering (500 Pax)", cost: "₹1,20,000" },
+      { item: "Photography", cost: "₹25,000" },
+      { item: "Videography", cost: "₹20,000" },
+      { item: "Premium DJ & Sound", cost: "₹10,000" },
+      { item: "Luxury Car Entry", cost: "₹5,000" },
+      { item: "Guest Rooms (2 Rooms)", cost: "₹5,000" },
+      { item: "Wedding Event", cost: "₹5,000" },
+      { item: "Seating Arrangement", cost: "₹5,000" },
+      { item: "Package Discount", cost: "-₹35,000", isDiscount: true }
+    ]
+  },
+  {
+    id: "premium_birthday_pkg",
+    title: "Premium Birthday Package",
+    badge: "Save ₹15,000 🎂",
+    badgeBg: "#dcfce7",
+    badgeColor: "#15803d",
+    eventType: "Birthday",
+    price: 85000,
+    priceStr: "₹85,000",
+    originalPrice: "₹1,00,000",
+    offerEndDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 Days from now
+    guests: "100 Guests",
+    img: "/decorations/decor_greenery_sofa.png",
+    gallery: [
+      "/decorations/decor_greenery_sofa.png",
+      "/decorations/decor_fairy_curtain.jpg"
+    ],
+    includedServices: [
+      "Birthday Hall",
+      "Balloon Decoration",
+      "Veg Menu",
+      "Photography",
+      "Music System",
+      "Cake Table",
+      "Invitation Card"
+    ],
+    originalDiscount: 15000,
+    serviceCosts: {
+      "Birthday Hall": 30000,
+      "Balloon Decoration": 20000,
+      "Veg Menu": 30000,
+      "Photography": 10000,
+      "Music System": 5000,
+      "Cake Table": 3000,
+      "Invitation Card": 2000
+    },
+    priceBreakdown: [
+      { item: "Birthday Hall", cost: "₹30,000" },
+      { item: "Balloon Decoration", cost: "₹20,000" },
+      { item: "Veg Menu (100 Pax)", cost: "₹30,000" },
+      { item: "Photography", cost: "₹10,000" },
+      { item: "Music System", cost: "₹5,000" },
+      { item: "Cake Table", cost: "₹3,000" },
+      { item: "Invitation Card", cost: "₹2,000" },
+      { item: "Package Discount", cost: "-₹15,000", isDiscount: true }
+    ]
+  },
+  {
+    id: "reception_pkg",
+    title: "Reception Package",
+    badge: "Save ₹30,000 💍",
+    badgeBg: "#fef3c7",
+    badgeColor: "#b45309",
+    eventType: "Reception",
+    price: 290000,
+    priceStr: "₹2,90,000",
+    originalPrice: "₹3,20,000",
+    offerEndDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000), // 8 Days from now
+    guests: "350 Guests",
+    img: "/decorations/decor_rustic_lanterns.jpg",
+    gallery: [
+      "/decorations/decor_rustic_lanterns.jpg",
+      "/decorations/decor_outdoor_lawn.jpg"
+    ],
+    includedServices: [
+      "Venue",
+      "Premium Decoration",
+      "Buffet",
+      "Photography",
+      "DJ",
+      "Guest Rooms"
+    ],
+    originalDiscount: 30000,
+    serviceCosts: {
+      "Venue": 110000,
+      "Premium Decoration": 65000,
+      "Buffet": 110000,
+      "Photography": 15000,
+      "DJ": 10000,
+      "Guest Rooms": 10000
+    },
+    priceBreakdown: [
+      { item: "Venue", cost: "₹1,10,000" },
+      { item: "Premium Decoration", cost: "₹65,000" },
+      { item: "Buffet Catering (350 Pax)", cost: "₹1,10,000" },
+      { item: "Photography", cost: "₹15,000" },
+      { item: "DJ", cost: "₹10,000" },
+      { item: "Guest Rooms", cost: "₹10,000" },
+      { item: "Package Discount", cost: "-₹30,000", isDiscount: true }
+    ]
+  },
+  {
+    id: "corporate_pkg",
+    title: "Corporate Package",
+    badge: "Save ₹20,000 🏢",
+    badgeBg: "#e0f2fe",
+    badgeColor: "#0369a1",
+    eventType: "Corporate",
+    price: 180000,
+    priceStr: "₹1,80,000",
+    originalPrice: "₹2,00,000",
+    guests: "250 Guests",
+    img: "/decorations/decor_luxury_table.jpg",
+    gallery: [
+      "/decorations/decor_luxury_table.jpg",
+      "/decorations/decor_grand_ballroom.jpg"
+    ],
+    includedServices: [
+      "Conference Hall",
+      "LED Screen",
+      "Projector",
+      "Lunch",
+      "Photography",
+      "Tea & Snacks"
+    ],
+    originalDiscount: 20000,
+    serviceCosts: {
+      "Conference Hall": 70000,
+      "LED Screen": 20000,
+      "Projector": 20000,
+      "Lunch": 50000,
+      "Photography": 15000,
+      "Tea & Snacks": 25000
+    },
+    priceBreakdown: [
+      { item: "Conference Hall", cost: "₹70,000" },
+      { item: "LED Screen", cost: "₹20,000" },
+      { item: "Projector", cost: "₹20,000" },
+      { item: "Corporate Lunch", cost: "₹50,000" },
+      { item: "Photography", cost: "₹15,000" },
+      { item: "Tea & Snacks", cost: "₹25,000" },
+      { item: "Package Discount", cost: "-₹20,000", isDiscount: true }
+    ]
+  },
+  {
+    id: "anniversary_pkg",
+    title: "Anniversary Package",
+    badge: "Save ₹15,000 🎉",
+    badgeBg: "#ffedd5",
+    badgeColor: "#c2410c",
+    eventType: "Anniversary",
+    price: 125000,
+    priceStr: "₹1,25,000",
+    originalPrice: "₹1,40,000",
+    guests: "150 Guests",
+    img: "/decorations/decor_floral_pink.png",
+    gallery: [
+      "/decorations/decor_floral_pink.png"
+    ],
+    includedServices: [
+      "Elegant Hall",
+      "Floral Decor",
+      "Multi-course Catering",
+      "Photography",
+      "Soft Music & Cake"
+    ],
+    originalDiscount: 15000,
+    serviceCosts: {
+      "Elegant Hall": 45000,
+      "Floral Decor": 30000,
+      "Multi-course Catering": 50000,
+      "Photography": 10000,
+      "Soft Music & Cake": 5000
+    },
+    priceBreakdown: [
+      { item: "Elegant Hall", cost: "₹45,000" },
+      { item: "Floral Decor", cost: "₹30,000" },
+      { item: "Multi-course Catering", cost: "₹50,000" },
+      { item: "Photography", cost: "₹10,000" },
+      { item: "Soft Music & Cake", cost: "₹5,000" },
+      { item: "Package Discount", cost: "-₹15,000", isDiscount: true }
+    ]
+  },
+  {
+    id: "babyshower_pkg",
+    title: "Baby Shower Package",
+    badge: "Save ₹10,000 👶",
+    badgeBg: "#f3e8ff",
+    badgeColor: "#6b21a8",
+    eventType: "Baby Shower",
+    price: 75000,
+    priceStr: "₹75,000",
+    originalPrice: "₹85,000",
+    guests: "80 Guests",
+    img: "/decorations/decor_fairy_curtain.jpg",
+    gallery: [
+      "/decorations/decor_fairy_curtain.jpg"
+    ],
+    includedServices: [
+      "Pastel Decor",
+      "Customized Cake Table",
+      "Snacks & Drinks",
+      "Games & Photography",
+      "Welcome Board",
+      "Banquet Hall"
+    ],
+    originalDiscount: 10000,
+    serviceCosts: {
+      "Pastel Decor": 20000,
+      "Customized Cake Table": 5000,
+      "Snacks & Drinks": 25000,
+      "Games & Photography": 15000,
+      "Welcome Board": 5000,
+      "Banquet Hall": 15000
+    },
+    priceBreakdown: [
+      { item: "Pastel Decor", cost: "₹20,000" },
+      { item: "Customized Cake Table", cost: "₹5,000" },
+      { item: "Snacks & Drinks", cost: "₹25,000" },
+      { item: "Games & Photography", cost: "₹15,000" },
+      { item: "Welcome Board", cost: "₹5,000" },
+      { item: "Banquet Hall", cost: "₹15,000" },
+      { item: "Package Discount", cost: "-₹10,000", isDiscount: true }
+    ]
+  }
+];
+// Helper to identify catering-related services
+const isCateringService = (service) => {
+  if (!service) return false;
+  const s = service.toLowerCase();
+  return s.includes("catering") || s.includes("menu") || s.includes("buffet") || s.includes("lunch") || s.includes("snacks");
+};
+
+// Helper to identify venue-related services
+const isVenueService = (service) => {
+  if (!service) return false;
+  const s = service.toLowerCase();
+  return s.includes("venue") || s.includes("hall") || s.includes("ballroom") || s.includes("resort");
+};
+
+// Helper to identify mandatory services
+const isMandatoryService = (service) => {
+  if (!service) return false;
+  const s = service.toLowerCase();
+  return (
+    s.includes("event") || 
+    s.includes("seating arrangement") || 
+    isCateringService(service) || 
+    isVenueService(service)
+  );
+};
+
+// Catering Menu Data
+export const cateringMenuData = {
+  veg: {
+    basePrice: 150,
+    title: "VEG Catering",
+    included: ["Rice", "Sambar", "Rasam", "Vegetable Curry", "Dal", "Salad", "Pickle", "Papad", "Curd", "Sweet", "Payasa", "Water Bottle"],
+    extras: [
+      { name: "Gobi Manchurian", price: 20 },
+      { name: "Paneer Tikka", price: 30 },
+      { name: "Baby Corn", price: 25 },
+      { name: "French Fries", price: 20 },
+      { name: "Ice Cream", price: 30 }
+    ]
+  },
+  nonveg: {
+    basePrice: 200,
+    title: "NON-VEG Catering",
+    included: ["Rice", "Sambar", "Rasam", "Dal", "Vegetable Curry", "Salad", "Chicken Curry", "Chicken Biryani", "Sweet", "Payasa", "Water Bottle"],
+    extras: [
+      { name: "Chicken Kebab", price: 20 },
+      { name: "Chicken 65", price: 30 },
+      { name: "Fish Fry", price: 40 },
+      { name: "Mutton Curry", price: 50 },
+      { name: "Ice Cream", price: 30 }
+    ]
+  },
+  both: {
+    basePrice: 250,
+    title: "Veg + Non-Veg Catering",
+    included: ["Rice", "Sambar", "Rasam", "Dal", "Vegetable Curry", "Salad", "Chicken Curry", "Chicken Biryani", "Sweet", "Payasa", "Water Bottle"],
+    extras: [
+      { name: "Gobi Manchurian", price: 20 },
+      { name: "Paneer Tikka", price: 30 },
+      { name: "Chicken Kebab", price: 20 },
+      { name: "Chicken 65", price: 30 },
+      { name: "Fish Fry", price: 40 },
+      { name: "Ice Cream", price: 30 }
+    ]
+  }
+};
+
+// Catering Menu mappings (Legacy backward compatibility if used elsewhere)
+const getCateringMenu = (pref) => {
+  const data = cateringMenuData[pref] || cateringMenuData.both;
+  return data.included.join(", ");
+};
+
+// Helper to dynamically calculate package price and breakdown
+const getPackagePriceInfo = (pkg, enabledServices, cateringType = "both", venueType = "ac", cateringExtrasList = [], customGuests = null) => {
+  let originalPrice = 0;
+  let breakdown = [];
+  
+  const parsedGuests = customGuests ? parseInt(customGuests.toString().replace(/[^0-9]/g, "")) || 100 : parseInt((pkg.guests || "100").replace(/[^0-9]/g, "")) || 100;
+  
+  pkg.includedServices.forEach(service => {
+    if (enabledServices.has(service)) {
+      let cost = pkg.serviceCosts[service] || 0;
+      let displayItem = service;
+      let menuDetails = null;
+      let cateringDataNode = null;
+      
+      if (isCateringService(service)) {
+        const cateringData = cateringMenuData[cateringType] || cateringMenuData.both;
+        let baseCateringCost = cateringData.basePrice * parsedGuests;
+        let extrasTotalCost = 0;
+        let extrasBreakdown = [];
+        
+        cateringExtrasList.forEach(extraName => {
+           const extraItem = cateringData.extras.find(e => e.name === extraName);
+           if (extraItem) {
+               let extraCost = extraItem.price * parsedGuests;
+               extrasTotalCost += extraCost;
+               extrasBreakdown.push({ name: extraName, cost: extraCost, pricePerPerson: extraItem.price });
+           }
+        });
+        
+        cost = baseCateringCost + extrasTotalCost;
+        
+        const nameSuffix = cateringType === "both" ? " (Veg & Non-Veg)" : (cateringType === "veg" ? " (Veg Only)" : " (Non-Veg Only)");
+        displayItem = `${service}${nameSuffix}`;
+        menuDetails = getCateringMenu(cateringType);
+        
+        cateringDataNode = {
+          baseCateringCost,
+          extrasTotalCost,
+          extrasBreakdown,
+          guests: parsedGuests
+        };
+        
+        breakdown.push({ item: displayItem, originalItem: service, costNum: cost, cost: `₹${cost.toLocaleString()}`, menuDetails, isCatering: true, cateringDataNode });
+      } else if (isVenueService(service)) {
+        if (venueType === "nonac") {
+            cost = Math.round(cost * 0.70);
+        }
+        const nameSuffix = venueType === "ac" ? " (AC)" : " (Non-AC)";
+        displayItem = `${service}${nameSuffix}`;
+        breakdown.push({ item: displayItem, originalItem: service, costNum: cost, cost: `₹${cost.toLocaleString()}`, menuDetails: null });
+      } else {
+        breakdown.push({ item: displayItem, originalItem: service, costNum: cost, cost: `₹${cost.toLocaleString()}`, menuDetails: null });
+      }
+      
+      originalPrice += cost;
+    }
+  });
+
+  const totalOriginalPrice = pkg.includedServices.reduce((sum, s) => sum + (pkg.serviceCosts[s] || 0), 0);
+  const ratio = totalOriginalPrice > 0 ? (originalPrice / totalOriginalPrice) : 0;
+  const discount = Math.round(pkg.originalDiscount * ratio);
+  const finalPrice = Math.max(0, originalPrice - discount);
+
+  if (discount > 0) {
+    breakdown.push({ item: "Package Discount", originalItem: "Package Discount", cost: `-₹${discount.toLocaleString()}`, isDiscount: true });
+  }
+
+  return {
+    originalPrice,
+    discount,
+    finalPrice,
+    priceStr: `₹${finalPrice.toLocaleString()}`,
+    originalPriceStr: `₹${originalPrice.toLocaleString()}`,
+    breakdown
+  };
+};
+
+export default function FeaturedOfferPackages({
+  title = "Special Offer Packages ⭐",
+  subtitle = "🎉 Featured All-Inclusive Event Packages — Pick your package, verify location & date availability, and book directly.",
+  redirectToLogin = false
+}) {
+  const navigate = useNavigate();
+
+  // Dynamic Service Customization State
+  const [enabledServices, setEnabledServices] = useState({});
+
+  const isServiceEnabled = (pkgId, serviceName) => {
+    if (!enabledServices[pkgId]) return true;
+    return enabledServices[pkgId].includes(serviceName);
+  };
+
+  // Catering preferences selection state
+  const [cateringPreferences, setCateringPreferences] = useState({});
+  const [cateringExtras, setCateringExtras] = useState({});
+
+  const getCateringPreference = (pkgId) => {
+    return cateringPreferences[pkgId] || "both";
+  };
+  
+  const getCateringExtras = (pkgId) => {
+    return cateringExtras[pkgId] || [];
+  };
+
+  const toggleCateringExtra = (pkgId, extraName) => {
+    setCateringExtras(prev => {
+      const current = prev[pkgId] || [];
+      let newExtras = [];
+      if (current.includes(extraName)) {
+        newExtras = current.filter(n => n !== extraName);
+      } else {
+        newExtras = [...current, extraName];
+      }
+      
+      const updated = { ...prev, [pkgId]: newExtras };
+      
+      const pkgOrigin = featuredPackagesData.find(p => p.id === pkgId);
+      const active = enabledServices[pkgId] || pkgOrigin.includedServices;
+      const catPref = getCateringPreference(pkgId);
+      const venPref = getVenuePreference(pkgId);
+      
+      const priceInfo = getPackagePriceInfo(pkgOrigin, new Set(active), catPref, venPref, newExtras, bookingPkg && bookingPkg.id === pkgId ? bookingPkg.guests : null);
+      
+      const activeWithPref = active.map(s => {
+        if (isCateringService(s)) {
+          const typeStr = catPref === "both" ? " (Veg & Non-Veg)" : (catPref === "veg" ? " (Veg Only)" : " (Non-Veg Only)");
+          return `${s}${typeStr}`;
+        }
+        if (isVenueService(s)) {
+          const vStr = venPref === "ac" ? " (AC)" : " (Non-AC)";
+          return `${s}${vStr}`;
+        }
+        return s;
+      });
+
+      if (viewDetailsPkg && viewDetailsPkg.id === pkgId) {
+        setViewDetailsPkg(prevDetails => ({
+          ...prevDetails,
+          price: priceInfo.finalPrice,
+          priceStr: priceInfo.priceStr,
+          originalPrice: priceInfo.originalPriceStr,
+          includedServices: activeWithPref,
+          priceBreakdown: priceInfo.breakdown
+        }));
+      }
+
+      if (bookingPkg && bookingPkg.id === pkgId) {
+        setBookingPkg(prevBooking => ({
+          ...prevBooking,
+          price: priceInfo.finalPrice,
+          priceStr: priceInfo.priceStr,
+          originalPrice: priceInfo.originalPriceStr,
+          includedServices: activeWithPref,
+          priceBreakdown: priceInfo.breakdown
+        }));
+      }
+
+      return updated;
+    });
+  };
+
+  // Venue preferences selection state
+  const [venuePreferences, setVenuePreferences] = useState({});
+  const getVenuePreference = (pkgId) => {
+    return venuePreferences[pkgId] || "ac";
+  };
+
+  const changeCateringPreference = (pkgId, pref) => {
+    // Clear extras first to ensure they don't persist across type changes
+    setCateringExtras(prev => ({ ...prev, [pkgId]: [] }));
+    
+    setCateringPreferences(prev => {
+      const updated = { ...prev, [pkgId]: pref };
+      const pkgOrigin = featuredPackagesData.find(p => p.id === pkgId);
+      const active = enabledServices[pkgId] || pkgOrigin.includedServices;
+      const venPref = getVenuePreference(pkgId);
+      const extras = []; // cleared extras
+      const priceInfo = getPackagePriceInfo(pkgOrigin, new Set(active), pref, venPref, extras, bookingPkg && bookingPkg.id === pkgId ? bookingPkg.guests : null);
+      const activeWithPref = active.map(s => {
+        if (isCateringService(s)) {
+          const typeStr = pref === "both" ? " (Veg & Non-Veg)" : (pref === "veg" ? " (Veg Only)" : " (Non-Veg Only)");
+          return `${s}${typeStr}`;
+        }
+        if (isVenueService(s)) {
+          const vStr = venPref === "ac" ? " (AC)" : " (Non-AC)";
+          return `${s}${vStr}`;
+        }
+        return s;
+      });
+
+      if (viewDetailsPkg && viewDetailsPkg.id === pkgId) {
+        setViewDetailsPkg(prevDetails => ({
+          ...prevDetails,
+          price: priceInfo.finalPrice,
+          priceStr: priceInfo.priceStr,
+          originalPrice: priceInfo.originalPriceStr,
+          includedServices: activeWithPref,
+          priceBreakdown: priceInfo.breakdown
+        }));
+      }
+
+      if (bookingPkg && bookingPkg.id === pkgId) {
+        setBookingPkg(prevBooking => ({
+          ...prevBooking,
+          price: priceInfo.finalPrice,
+          priceStr: priceInfo.priceStr,
+          originalPrice: priceInfo.originalPriceStr,
+          includedServices: activeWithPref,
+          priceBreakdown: priceInfo.breakdown
+        }));
+      }
+
+      return updated;
+    });
+  };
+
+  const changeVenuePreference = (pkgId, pref) => {
+    setVenuePreferences(prev => {
+      const updated = { ...prev, [pkgId]: pref };
+      const pkgOrigin = featuredPackagesData.find(p => p.id === pkgId);
+      const active = enabledServices[pkgId] || pkgOrigin.includedServices;
+      const catPref = getCateringPreference(pkgId);
+      const extras = getCateringExtras(pkgId);
+      const priceInfo = getPackagePriceInfo(pkgOrigin, new Set(active), catPref, pref, extras, bookingPkg && bookingPkg.id === pkgId ? bookingPkg.guests : null);
+      const activeWithPref = active.map(s => {
+        if (isCateringService(s)) {
+          const typeStr = catPref === "both" ? " (Veg & Non-Veg)" : (catPref === "veg" ? " (Veg Only)" : " (Non-Veg Only)");
+          return `${s}${typeStr}`;
+        }
+        if (isVenueService(s)) {
+          const vStr = pref === "ac" ? " (AC)" : " (Non-AC)";
+          return `${s}${vStr}`;
+        }
+        return s;
+      });
+
+      if (viewDetailsPkg && viewDetailsPkg.id === pkgId) {
+        setViewDetailsPkg(prevDetails => ({
+          ...prevDetails,
+          price: priceInfo.finalPrice,
+          priceStr: priceInfo.priceStr,
+          originalPrice: priceInfo.originalPriceStr,
+          includedServices: activeWithPref,
+          priceBreakdown: priceInfo.breakdown
+        }));
+      }
+
+      if (bookingPkg && bookingPkg.id === pkgId) {
+        setBookingPkg(prevBooking => ({
+          ...prevBooking,
+          price: priceInfo.finalPrice,
+          priceStr: priceInfo.priceStr,
+          originalPrice: priceInfo.originalPriceStr,
+          includedServices: activeWithPref,
+          priceBreakdown: priceInfo.breakdown
+        }));
+      }
+
+      return updated;
+    });
+  };
+
+  const toggleService = (pkgId, serviceName) => {
+    if (isMandatoryService(serviceName)) return; // Prevent toggling mandatory services
+    const pkgOrigin = featuredPackagesData.find(p => p.id === pkgId);
+    let nextList = [];
+    setEnabledServices(prev => {
+      const current = prev[pkgId] || pkgOrigin.includedServices;
+      if (current.includes(serviceName)) {
+        if (current.length === 1) return prev;
+        nextList = current.filter(s => s !== serviceName);
+      } else {
+        nextList = [...current, serviceName];
+      }
+      return { ...prev, [pkgId]: nextList };
+    });
+
+    const currentList = enabledServices[pkgId] || pkgOrigin.includedServices;
+    if (currentList.includes(serviceName)) {
+      if (currentList.length === 1) return;
+      nextList = currentList.filter(s => s !== serviceName);
+    } else {
+      nextList = [...currentList, serviceName];
+    }
+
+    const catPref = getCateringPreference(pkgId);
+    const venPref = getVenuePreference(pkgId);
+    const extras = getCateringExtras(pkgId);
+    const priceInfo = getPackagePriceInfo(pkgOrigin, new Set(nextList), catPref, venPref, extras, bookingPkg && bookingPkg.id === pkgId ? bookingPkg.guests : null);
+    const nextListWithPref = nextList.map(s => {
+      if (isCateringService(s)) {
+        const typeStr = catPref === "both" ? " (Veg & Non-Veg)" : (catPref === "veg" ? " (Veg Only)" : " (Non-Veg Only)");
+        return `${s}${typeStr}`;
+      }
+      if (isVenueService(s)) {
+        const vStr = venPref === "ac" ? " (AC)" : " (Non-AC)";
+        return `${s}${vStr}`;
+      }
+      return s;
+    });
+
+    if (viewDetailsPkg && viewDetailsPkg.id === pkgId) {
+      setViewDetailsPkg(prev => ({
+        ...prev,
+        price: priceInfo.finalPrice,
+        priceStr: priceInfo.priceStr,
+        originalPrice: priceInfo.originalPriceStr,
+        includedServices: nextListWithPref,
+        priceBreakdown: priceInfo.breakdown
+      }));
+    }
+
+    if (bookingPkg && bookingPkg.id === pkgId) {
+      setBookingPkg(prev => ({
+        ...prev,
+        price: priceInfo.finalPrice,
+        priceStr: priceInfo.priceStr,
+        originalPrice: priceInfo.originalPriceStr,
+        includedServices: nextListWithPref,
+        priceBreakdown: priceInfo.breakdown
+      }));
+    }
+  };
+
+  const getDynamicPackageInfo = (pkg) => {
+    const active = enabledServices[pkg.id] || pkg.includedServices;
+    const catPref = getCateringPreference(pkg.id);
+    const extras = getCateringExtras(pkg.id);
+    const priceInfo = getPackagePriceInfo(pkg, new Set(active), catPref, "ac", extras, bookingPkg && bookingPkg.id === pkg.id ? bookingPkg.guests : null);
+    const activeWithPref = active.map(s => {
+      if (isCateringService(s)) {
+        const typeStr = catPref === "both" ? " (Veg & Non-Veg)" : (catPref === "veg" ? " (Veg Only)" : " (Non-Veg Only)");
+        return `${s}${typeStr}`;
+      }
+      return s;
+    });
+    return {
+      ...pkg,
+      price: priceInfo.finalPrice,
+      priceStr: priceInfo.priceStr,
+      originalPrice: priceInfo.originalPriceStr,
+      includedServices: activeWithPref,
+      priceBreakdown: priceInfo.breakdown
+    };
+  };
+
+  // Package Details Popup State
+  const [viewDetailsPkg, setViewDetailsPkg] = useState(null);
+
+  // Venue Details Popup State (FOR SELECT VENUE VIEW DETAILS)
+  const [viewingVenueDetails, setViewingVenueDetails] = useState(null);
+
+  // Guided Direct Booking Wizard Modal State
+  const [bookingPkg, setBookingPkg] = useState(null);
+  const [wizardStep, setWizardStep] = useState(1); // 1: Event & Location, 2: Date Calendar, 3: Select Venue, 4: Summary
+
+  // Razorpay Gateway Modal State
+  const [showRazorpayModal, setShowRazorpayModal] = useState(false);
+  const [razorpayMethod, setRazorpayMethod] = useState("upi");
+  const [upiIdInput, setUpiIdInput] = useState("user@okaxis");
+  const [isProcessingRazorpay, setIsProcessingRazorpay] = useState(false);
+  const [pendingPaymentData, setPendingPaymentData] = useState(null);
+
+  // Step 1: Location & Event Selection
+  const [selectedEventType, setSelectedEventType] = useState("Wedding");
+  const [selectedState, setSelectedState] = useState("Karnataka");
+  const [selectedCity, setSelectedCity] = useState("Udupi"); // Defaults to Udupi
+  const [selectedArea, setSelectedArea] = useState("Manipal");
+
+  // Step 2: Interactive Calendar State
+  const [currentMonth, setCurrentMonth] = useState(7); // 7 = August (0-indexed)
+  const [currentYear, setCurrentYear] = useState(2026);
+  const [selectedDayNumber, setSelectedDayNumber] = useState(15);
+
+  // Calendar Status Lists (Simulated for real visual calendar)
+  const bookedDaysList = [5, 12, 20, 30]; // 🔴 Red Days (Already Booked)
+  const limitedDaysList = [8, 18, 28];   // 🟠 Orange Days (Limited Availability)
+
+  // Step 3: Venue Selection
+  const [selectedVenue, setSelectedVenue] = useState(null);
+  const [isHomeFunction, setIsHomeFunction] = useState(false);
+  const [homeAddress, setHomeAddress] = useState("");
+
+  // Real venues fetched from API
+  const [realVenues, setRealVenues] = useState([]);
+  
+  useEffect(() => {
+    import("../user-dashboard/services/userApi").then(({ getVenues }) => {
+      getVenues().then(data => {
+        setRealVenues(data || []);
+      }).catch(err => console.log(err));
+    }).catch(err => console.log("Could not import userApi"));
+  }, []);
+
+  // Get Dynamic Venues Filtered STRICTLY by Selected City & AC Preference
+  const getCityFilteredVenues = () => {
+    let baseVenues = realVenues.length > 0 ? realVenues.map(v => ({
+      id: v._id || v.id,
+      name: v.name || v.venue_name,
+      city: v.city || v.location?.split(',').pop().trim() || selectedCity,
+      area: v.location?.split(',')[0].trim() || selectedArea,
+      type: v.type || v.venue_type || "Banquet Hall",
+      capacity: `${v.capacity} Guests`,
+      parking: v.parking || "Parking Available",
+      rooms: v.rooms || "Rooms Available",
+      rating: v.rating || "4.5",
+      img: (v.images && v.images.length > 0) ? v.images[0] : (v.image || "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&w=600&q=80"),
+      features: v.facilities || v.amenities || ["Stage", "Dining Area"]
+    })) : availableVenuesData;
+
+    let filtered = baseVenues.filter(
+      v => v.city.toLowerCase() === selectedCity.toLowerCase()
+    );
+    
+    // Filter by Venue Preference (AC/Non-AC)
+    const pref = getVenuePreference(bookingPkg?.id);
+    if (pref === "ac") {
+      filtered = filtered.filter(v => (v.type.toLowerCase().includes("ac") && !v.type.toLowerCase().includes("non-ac")) || v.type.toLowerCase().includes("luxury"));
+    } else if (pref === "nonac") {
+      filtered = filtered.filter(v => v.type.toLowerCase().includes("non-ac") || !v.type.toLowerCase().includes("ac"));
+    }
+
+    return filtered;
+  };
+
+  const currentCityVenues = getCityFilteredVenues();
+
+  // Open Direct Booking Flow for a Package
+  const handleStartBooking = (pkg) => {
+    setBookingPkg(pkg);
+    setSelectedEventType(pkg.eventType || "Wedding");
+    setWizardStep(1);
+    setSelectedVenue(null);
+    setIsHomeFunction(false);
+  };
+
+  // Check Availability Action
+  const handleCheckAvailability = () => {
+    const isBooked = bookedDaysList.includes(selectedDayNumber);
+
+    if (!isBooked && currentCityVenues.length > 0) {
+      setSelectedVenue(currentCityVenues[0]);
+    }
+    setWizardStep(3);
+  };
+
+  // Step 4 Click -> Launch Interactive Razorpay Checkout Modal
+  const handleFinalBookingProceed = async () => {
+    if (!bookingPkg) return;
+    if (isProcessingRazorpay) return;
+    setIsProcessingRazorpay(true);
+
+    try {
+      const u = JSON.parse(localStorage.getItem("user")) || {};
+      const clientId = u.id || u._id || "client_1";
+      const formattedDate = `${selectedDayNumber} Aug 2026`;
+      const venueName = isHomeFunction
+        ? `Home Function (${homeAddress || "Client Home Address"})`
+        : (selectedVenue ? selectedVenue.name : "Udupi Royal Ocean Palace");
+
+      const totalCost = bookingPkg.price;
+      const advanceAmount = 50000;
+      const remainingAmount = Math.max(0, totalCost - advanceAmount);
+
+      // Create Booking
+      const bookingPayload = {
+        client_id: clientId,
+        phone_number: u.phone || "+919876543210",
+        userId: clientId,
+        clientName: u.name || "Client",
+        clientEmail: u.email || "client@example.com",
+        event_type: selectedEventType,
+        eventTitle: bookingPkg.title,
+        event_date: formattedDate,
+        time_slot: "Full Day",
+        venue_id: selectedVenue ? selectedVenue.id : "V-001",
+        venueName: venueName,
+        address: `${selectedArea}, ${selectedCity}`,
+        catering_details: {
+          guest_count: bookingPkg.guests.replace(/[^0-9]/g, "") || "500",
+          type: "Offer Package Menu",
+          food_type: "Offer Package Menu"
+        },
+        total_cost: totalCost,
+        hallType: selectedVenue ? selectedVenue.type : "Banquet Hall",
+        decorationPackage: bookingPkg.id,
+        cateringPackage: "Offer Catering"
+      };
+
+      const reserveRes = await fetch("http://localhost:5000/api/bookings/check-and-reserve", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bookingPayload)
+      });
+      const reserveData = await reserveRes.json();
+
+      if (!reserveData.success) {
+        alert("Failed to create booking: " + (reserveData.message || "Unknown error"));
+        setIsProcessingRazorpay(false);
+        return;
+      }
+
+      const bookingId = reserveData.booking_id || reserveData.data?._id;
+
+      // Create Order
+      const orderRes = await fetch("http://localhost:5000/api/payments/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          booking_id: bookingId,
+          amount: advanceAmount,
+          client_id: clientId,
+          phone_number: u.phone || "+919876543210",
+          event_type: selectedEventType
+        })
+      });
+      const orderData = await orderRes.json();
+
+      if (!orderData.success) {
+        alert("Failed to create payment order: " + (orderData.message || "Unknown error"));
+        setIsProcessingRazorpay(false);
+        return;
+      }
+
+      // Razorpay
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => {
+        const options = {
+          key: "rzp_test_SGkB8sZW1kNRvT",
+          amount: orderData.amount,
+          currency: "INR",
+          name: "Event Management System",
+          description: "Event Booking Advance Payment",
+          image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=100&q=80",
+          order_id: orderData.order_id,
+          handler: async function (response) {
+            try {
+              const verifyRes = await fetch("http://localhost:5000/api/payments/verify-payment", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  booking_id: bookingId,
+                  client_id: clientId,
+                  amount_paid: advanceAmount
+                })
+              });
+              
+              const verifyData = await verifyRes.json();
+              
+              if (verifyData.success) {
+                setBookingPkg(null);
+                setViewDetailsPkg(null);
+                setIsProcessingRazorpay(false);
+                navigate("/client/payment-success", {
+                  state: {
+                    orderId: bookingId
+                  }
+                });
+              } else {
+                alert("Payment verification failed! " + verifyData.message);
+                setIsProcessingRazorpay(false);
+              }
+            } catch (err) {
+              alert("Payment verification error.");
+              setIsProcessingRazorpay(false);
+            }
+          },
+          prefill: {
+            name: u.name || "Client",
+            email: u.email || "client@example.com",
+            contact: u.phone || "9999999999"
+          },
+          theme: { color: "#ea580c" },
+          modal: {
+            ondismiss: function() {
+              setIsProcessingRazorpay(false);
+            }
+          }
+        };
+        const rzp1 = new window.Razorpay(options);
+        rzp1.open();
+      };
+      script.onerror = () => {
+        alert("Failed to load Razorpay SDK");
+        setIsProcessingRazorpay(false);
+      };
+      document.body.appendChild(script);
+
+    } catch (err) {
+      alert("Something went wrong during checkout initialization.");
+      setIsProcessingRazorpay(false);
+    }
+  };
+
+  // Confirm Razorpay Checkout Payment Action
+  const handleExecuteRazorpayPayment = () => {
+    // legacy fake payment handler, no longer used as we trigger real razorpay directly
+  };
+
+  return (
+    <div style={{ margin: "28px 0 60px" }}>
+      
+      {/* SECTION HEADER */}
+      <div style={{ marginBottom: "20px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Sparkles className="text-orange-500" size={24} />
+          <h3 style={{ fontSize: "22px", fontWeight: "800", color: "#0f172a", margin: 0 }}>
+            {title}
+          </h3>
+        </div>
+        <p style={{ fontSize: "14px", color: "#64748b", margin: "4px 0 0" }}>
+          {subtitle}
+        </p>
+      </div>
+
+      {/* 1. FIRST SHOW THE SPECIAL OFFER PACKAGES CARDS GRID IN ONE LINE WITH HORIZONTAL SCROLLBAR */}
+      <div style={{
+        display: "flex",
+        gap: "24px",
+        overflowX: "auto",
+        paddingBottom: "20px",
+        paddingTop: "8px",
+        scrollSnapType: "x mandatory",
+        WebkitOverflowScrolling: "touch"
+      }}>
+        {featuredPackagesData.map(pkgOrigin => {
+          const pkg = getDynamicPackageInfo(pkgOrigin);
+          return (
+            <div
+              key={pkg.id}
+              className="hover-card-highlight"
+              onClick={() => {
+                if (redirectToLogin) {
+                  navigate("/login");
+                }
+              }}
+              style={{
+                minWidth: "350px",
+                maxWidth: "350px",
+                scrollSnapAlign: "start",
+                flexShrink: 0,
+                background: "white",
+                borderRadius: "20px",
+                border: "1px solid #e2e8f0",
+                overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                boxShadow: "0 10px 25px -5px rgba(15, 23, 42, 0.08)",
+                position: "relative",
+                cursor: redirectToLogin ? "pointer" : "default"
+              }}
+            >
+              <div>
+                {/* HERO IMAGE & OFFER BADGE */}
+                <div style={{ width: "100%", height: "185px", position: "relative", overflow: "hidden" }}>
+                  <img src={pkg.img} alt={pkg.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(15, 23, 42, 0.85) 0%, transparent 60%)" }}></div>
+                  
+                  <span style={{
+                    position: "absolute",
+                    top: "12px",
+                    right: "12px",
+                    background: pkg.badgeBg,
+                    color: pkg.badgeColor,
+                    fontSize: "11px",
+                    fontWeight: "800",
+                    padding: "4px 12px",
+                    borderRadius: "10px",
+                    boxShadow: "0 4px 10px rgba(0,0,0,0.18)"
+                  }}>
+                    {pkg.badge}
+                  </span>
+
+                  <div style={{ position: "absolute", bottom: "12px", left: "16px", right: "16px", color: "white" }}>
+                    {pkg.offerEndDate && (
+                      <div style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "11px", color: "#2563eb", background: "rgba(239, 246, 255, 0.95)", padding: "4px 8px", borderRadius: "6px", marginBottom: "6px", fontWeight: "bold", boxShadow: "0 2px 5px rgba(0,0,0,0.2)" }}>
+                        <Clock size={12} />
+                        <CountdownTimer targetDate={pkg.offerEndDate} />
+                      </div>
+                    )}
+                    <h4 style={{ fontSize: "19px", fontWeight: "800", margin: "0 0 2px" }}>{pkg.title}</h4>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "12px", color: "#cbd5e1" }}>
+                      <span>👥 {pkg.guests}</span>
+                      <span style={{ color: "#fbbf24", fontWeight: "700" }}>{pkg.eventType}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* INCLUDED SERVICES CHECKMARKS */}
+                <div style={{ padding: "16px", background: "#f8fafc", borderBottom: "1px solid #f1f5f9" }}>
+                  <span style={{ fontSize: "11px", fontWeight: "700", color: "#475569", textTransform: "uppercase", letterSpacing: "0.5px", display: "block", marginBottom: "8px" }}>
+                    Included Services:
+                  </span>
+                  
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px" }}>
+                    {pkgOrigin.includedServices.map((service, i) => {
+                      const active = isServiceEnabled(pkgOrigin.id, service);
+                      return (
+                        <div
+                          key={i}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleService(pkgOrigin.id, service);
+                          }}
+                          style={{
+                            fontSize: "11px",
+                            color: active ? "#15803d" : "#64748b",
+                            fontWeight: "600",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            cursor: "pointer",
+                            padding: "4px 6px",
+                            borderRadius: "6px",
+                            background: active ? "rgba(240, 253, 244, 0.7)" : "rgba(241, 245, 249, 0.5)",
+                            border: active ? "1px solid rgba(187, 247, 208, 0.6)" : "1px dashed #cbd5e1",
+                            transition: "all 0.15s ease",
+                            userSelect: "none"
+                          }}
+                          title={active ? "Click to remove this service" : "Click to add this service"}
+                        >
+                          {active ? (
+                            <CheckCircle2 size={13} className="text-emerald-600 shrink-0" strokeWidth={3} />
+                          ) : (
+                            <span style={{
+                              width: "12px",
+                              height: "12px",
+                              borderRadius: "50%",
+                              border: "1.5px solid #94a3b8",
+                              display: "inline-block",
+                              flexShrink: 0
+                            }} />
+                          )}
+                          <span style={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textDecoration: active ? "none" : "line-through",
+                            textOverflow: "ellipsis"
+                          }}>{service}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* PACKAGE PRICE & ACTION BUTTONS */}
+              <div style={{ padding: "16px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "12px" }}>
+                  <div>
+                    <span style={{ fontSize: "10px", color: "#94a3b8", display: "block" }}>Starting Price</span>
+                    <span style={{ fontSize: "12px", color: "#94a3b8", textDecoration: "line-through", marginRight: "6px" }}>{pkg.originalPrice}</span>
+                    <span style={{ fontSize: "20px", fontWeight: "900", color: "#ea580c" }}>{pkg.priceStr}</span>
+                  </div>
+                  <span style={{ fontSize: "11px", color: "#16a34a", fontWeight: "800", background: "#dcfce7", padding: "2px 8px", borderRadius: "6px" }}>
+                    All Inclusive
+                  </span>
+                </div>
+
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button
+                    type="button"
+                    className="hover-button-highlight"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (redirectToLogin) {
+                        navigate("/login");
+                      } else {
+                        setViewDetailsPkg(pkg);
+                      }
+                    }}
+                    style={{
+                      flex: 1,
+                      padding: "9px",
+                      borderRadius: "10px",
+                      border: "1px solid #cbd5e1",
+                      background: "white",
+                      color: "#475569",
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      cursor: "pointer"
+                    }}
+                  >
+                    View Details
+                  </button>
+                  <button
+                    type="button"
+                    className="hover-button-highlight"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (redirectToLogin) {
+                        navigate("/login");
+                      } else {
+                        handleStartBooking(pkg);
+                      }
+                    }}
+                    style={{
+                      flex: 1.2,
+                      padding: "9px",
+                      borderRadius: "10px",
+                      border: "none",
+                      background: "linear-gradient(135deg, #ea580c 0%, #c2410c 100%)",
+                      color: "white",
+                      fontSize: "12px",
+                      fontWeight: "800",
+                      cursor: "pointer",
+                      boxShadow: "0 4px 12px rgba(234, 88, 12, 0.25)"
+                    }}
+                  >
+                    Book Now 🚀
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 2. PACKAGE DETAILS POPUP / MODAL */}
+      {viewDetailsPkg && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(15, 23, 42, 0.75)",
+          backdropFilter: "blur(8px)",
+          zIndex: 99999,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "20px"
+        }}>
+          <div style={{
+            background: "white",
+            borderRadius: "24px",
+            maxWidth: "640px",
+            width: "100%",
+            maxHeight: "90vh",
+            overflowY: "auto",
+            padding: "28px",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.3)",
+            position: "relative",
+            border: "1px solid rgba(255, 255, 255, 0.8)"
+          }}>
+            <button
+              type="button"
+              onClick={() => setViewDetailsPkg(null)}
+              style={{ position: "absolute", top: "20px", right: "20px", background: "#f1f5f9", border: "none", borderRadius: "50%", padding: "8px", cursor: "pointer", color: "#475569" }}
+            >
+              <X size={20} />
+            </button>
+
+            {/* Gallery Images */}
+            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "10px", marginBottom: "20px" }}>
+              <div style={{ height: "180px", borderRadius: "14px", overflow: "hidden", position: "relative" }}>
+                <img src={viewDetailsPkg.img} alt={viewDetailsPkg.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <span style={{ position: "absolute", bottom: "10px", left: "10px", background: viewDetailsPkg.badgeBg, color: viewDetailsPkg.badgeColor, fontSize: "11px", fontWeight: "800", padding: "4px 10px", borderRadius: "8px" }}>
+                  {viewDetailsPkg.badge}
+                </span>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {viewDetailsPkg.gallery.slice(0, 2).map((gImg, idx) => (
+                  <div key={idx} style={{ height: "85px", borderRadius: "10px", overflow: "hidden" }}>
+                    <img src={gImg} alt="Gallery" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" }}>
+              <h3 style={{ fontSize: "22px", fontWeight: "800", color: "#0f172a", margin: 0 }}>{viewDetailsPkg.title}</h3>
+              <span style={{ fontSize: "22px", fontWeight: "900", color: "#ea580c" }}>{viewDetailsPkg.priceStr}</span>
+            </div>
+            
+            <p style={{ fontSize: "13px", color: "#64748b", margin: "0 0 16px" }}>
+              Complete all-inclusive package for {viewDetailsPkg.guests}
+            </p>
+
+            {/* Package Includes Checkmarks */}
+            <div style={{ background: "#f0fdf4", padding: "16px", borderRadius: "14px", border: "1px solid #bbf7d0", marginBottom: "20px" }}>
+              <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#166534", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <CheckCircle2 size={16} /> Package Includes (Click to customize services)
+              </h4>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "8px" }}>
+                {featuredPackagesData.find(p => p.id === viewDetailsPkg.id).includedServices.map((service, i) => {
+                  const active = viewDetailsPkg.includedServices.some(s => s.startsWith(service));
+                  const isCatering = isCateringService(service);
+                  return (
+                    <div
+                      key={i}
+                      onClick={() => toggleService(viewDetailsPkg.id, service)}
+                      style={{
+                        fontSize: "12px",
+                        color: active ? "#15803d" : "#64748b",
+                        fontWeight: "600",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-start",
+                        gap: "4px",
+                        cursor: "pointer",
+                        padding: "8px 10px",
+                        borderRadius: "10px",
+                        background: active ? "rgba(220, 252, 231, 0.7)" : "rgba(241, 245, 249, 0.5)",
+                        border: active ? "1px solid rgba(187, 247, 208, 0.6)" : "1px dashed #cbd5e1",
+                        transition: "all 0.15s ease",
+                        userSelect: "none"
+                      }}
+                      title={active ? "Click to remove this service" : "Click to add this service"}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", width: "100%" }}>
+                        {active ? (
+                          <CheckCircle2 size={14} className="text-emerald-600 shrink-0" strokeWidth={3} />
+                        ) : (
+                          <span style={{
+                            width: "14px",
+                            height: "14px",
+                            borderRadius: "50%",
+                            border: "1.5px solid #94a3b8",
+                            display: "inline-block",
+                            flexShrink: 0
+                          }} />
+                        )}
+                        <span style={{
+                          textDecoration: active ? "none" : "line-through",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap"
+                        }}>{service}</span>
+                      </div>
+                      
+                      {isCatering && active && (
+                        <div
+                          onClick={(e) => e.stopPropagation()}
+                          style={{
+                            display: "flex",
+                            gap: "2px",
+                            marginTop: "6px",
+                            background: "#e2e8f0",
+                            padding: "2px",
+                            borderRadius: "6px",
+                            width: "100%"
+                          }}
+                        >
+                          {["veg", "nonveg", "both"].map((type) => {
+                            const isSel = getCateringPreference(viewDetailsPkg.id) === type;
+                            return (
+                              <button
+                                key={type}
+                                type="button"
+                                onClick={() => changeCateringPreference(viewDetailsPkg.id, type)}
+                                style={{
+                                  flex: 1,
+                                  fontSize: "9px",
+                                  padding: "3px 0",
+                                  border: "none",
+                                  borderRadius: "4px",
+                                  background: isSel ? "#15803d" : "transparent",
+                                  color: isSel ? "white" : "#475569",
+                                  cursor: "pointer",
+                                  fontWeight: "800",
+                                  transition: "all 0.15s ease",
+                                  textTransform: "uppercase"
+                                }}
+                              >
+                                {type === "both" ? "Both" : (type === "veg" ? "Veg" : "NV")}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Price Breakdown Table */}
+            <div style={{ background: "#f8fafc", padding: "16px", borderRadius: "14px", border: "1px solid #e2e8f0", marginBottom: "20px" }}>
+              <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", margin: "0 0 12px" }}>
+                Price Breakdown
+              </h4>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "12px" }}>
+                {viewDetailsPkg.priceBreakdown.map((row, i) => (
+                  <div key={i} style={{ display: "flex", justifyContent: "space-between", color: row.isDiscount ? "#dc2626" : "#475569", fontWeight: row.isDiscount ? "700" : "500", borderBottom: i === viewDetailsPkg.priceBreakdown.length - 1 ? "none" : "1px dashed #e2e8f0", paddingBottom: "4px" }}>
+                    <span>{row.item}</span>
+                    <span>{row.cost}</span>
+                  </div>
+                ))}
+                <hr style={{ border: "none", borderTop: "1.5px solid #cbd5e1", margin: "4px 0" }} />
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "16px", fontWeight: "900", color: "#0f172a" }}>
+                  <span>Total Package Price</span>
+                  <span style={{ color: "#ea580c" }}>{viewDetailsPkg.priceStr}</span>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                type="button"
+                className="hover-button-highlight"
+                onClick={() => setViewDetailsPkg(null)}
+                style={{ flex: 1, padding: "12px", borderRadius: "10px", border: "1px solid #cbd5e1", background: "white", color: "#475569", fontWeight: "700", cursor: "pointer" }}
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                className="hover-button-highlight"
+                onClick={() => {
+                  if (redirectToLogin) {
+                    navigate("/login");
+                  } else {
+                    handleStartBooking(viewDetailsPkg);
+                    setViewDetailsPkg(null);
+                  }
+                }}
+                style={{ flex: 1.5, padding: "12px", borderRadius: "10px", border: "none", background: "#ea580c", color: "white", fontWeight: "800", fontSize: "14px", cursor: "pointer" }}
+              >
+                {redirectToLogin ? "Login to Book 🚀" : "Book Package 🚀"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 3. GUIDED DIRECT BOOKING WIZARD MODAL (LOCATION -> CALENDAR -> VENUES IN SELECTED CITY) */}
+      {bookingPkg && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(15, 23, 42, 0.78)",
+          backdropFilter: "blur(8px)",
+          zIndex: 99999,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "20px"
+        }}>
+          <div style={{
+            background: "white",
+            borderRadius: "24px",
+            maxWidth: "680px",
+            width: "100%",
+            maxHeight: "90vh",
+            overflowY: "auto",
+            padding: "28px",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.35)",
+            position: "relative",
+            border: "1px solid rgba(255, 255, 255, 0.8)"
+          }}>
+            <button
+              type="button"
+              onClick={() => setBookingPkg(null)}
+              style={{ position: "absolute", top: "20px", right: "20px", background: "#f1f5f9", border: "none", borderRadius: "50%", padding: "8px", cursor: "pointer", color: "#475569" }}
+            >
+              <X size={20} />
+            </button>
+
+            {/* STEPPER HEADER */}
+            <div style={{ marginBottom: "24px" }}>
+              <span style={{ fontSize: "11px", fontWeight: "800", color: "#ea580c", textTransform: "uppercase", background: "#fff7ed", padding: "4px 10px", borderRadius: "8px" }}>
+                Direct Booking Wizard — {bookingPkg.title}
+              </span>
+              
+              {/* Stepper Progress Bar */}
+              <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
+                {[1, 2, 3, 4].map(st => (
+                  <div
+                    key={st}
+                    style={{
+                      flex: 1,
+                      height: "6px",
+                      borderRadius: "4px",
+                      background: wizardStep >= st ? "#ea580c" : "#e2e8f0",
+                      transition: "all 0.3s ease"
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* --- STEP 1: SELECT LOCATION --- */}
+            {wizardStep === 1 && (
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                  <div>
+                    <h4 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: "0 0 2px" }}>
+                      Step 1 – Select Event Location
+                    </h4>
+                    <p style={{ fontSize: "12px", color: "#64748b", margin: 0 }}>
+                      Venues will be dynamically filtered strictly for your selected state, city, and locality.
+                    </p>
+                  </div>
+
+                  <span style={{ fontSize: "12px", background: "#fff7ed", color: "#ea580c", fontWeight: "800", padding: "6px 12px", borderRadius: "8px", border: "1px solid #ffedd5" }}>
+                    Package: {bookingPkg.title} ({bookingPkg.eventType})
+                  </span>
+                </div>
+
+                <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginBottom: "24px" }}>
+                  {/* Location (State -> City -> Area) */}
+                  <div style={{ background: "#f8fafc", padding: "18px", borderRadius: "16px", border: "1px solid #e2e8f0" }}>
+                    <span style={{ fontSize: "13px", fontWeight: "800", color: "#0f172a", display: "block", marginBottom: "12px" }}>
+                      📍 Select State, City & Locality
+                    </span>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1.2fr", gap: "10px" }}>
+                      <div>
+                        <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b" }}>State</label>
+                        <select
+                          value={selectedState}
+                          onChange={(e) => {
+                            const newSt = e.target.value;
+                            setSelectedState(newSt);
+                            const cList = citiesMap[newSt] || ["Udupi"];
+                            setSelectedCity(cList[0]);
+                            const aList = areasMap[cList[0]] || ["Manipal"];
+                            setSelectedArea(aList[0]);
+                          }}
+                          style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "12px", marginTop: "2px", background: "white" }}
+                        >
+                          {statesList.map(st => (
+                            <option key={st} value={st}>{st}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b" }}>City</label>
+                        <select
+                          value={selectedCity}
+                          onChange={(e) => {
+                            const newCity = e.target.value;
+                            setSelectedCity(newCity);
+                            const aList = areasMap[newCity] || ["Manipal"];
+                            setSelectedArea(aList[0]);
+                          }}
+                          style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "12px", marginTop: "2px", background: "white" }}
+                        >
+                          {(citiesMap[selectedState] || ["Udupi"]).map(c => (
+                            <option key={c} value={c}>{c}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b" }}>Area / Locality</label>
+                        <select
+                          value={selectedArea}
+                          onChange={(e) => setSelectedArea(e.target.value)}
+                          style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "12px", marginTop: "2px", background: "white" }}
+                        >
+                          {(areasMap[selectedCity] || ["Manipal"]).map(a => (
+                            <option key={a} value={a}>{a}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Guests and Venue Type Preferences */}
+                  <div style={{ background: "#f8fafc", padding: "18px", borderRadius: "16px", border: "1px solid #e2e8f0" }}>
+                    <span style={{ fontSize: "13px", fontWeight: "800", color: "#0f172a", display: "block", marginBottom: "12px" }}>
+                      👥 Event Requirements
+                    </span>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px" }}>
+                      <div>
+                        <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b" }}>Expected Number of Guests</label>
+                        <input
+                          type="number"
+                          min="10"
+                          value={bookingPkg?.guests ? parseInt(bookingPkg.guests) : 100}
+                          onChange={(e) => {
+                            if (bookingPkg) {
+                              setBookingPkg({ ...bookingPkg, guests: e.target.value + " Guests" });
+                            }
+                          }}
+                          style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "12px", marginTop: "2px", background: "white", outline: "none" }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: "11px", fontWeight: "600", color: "#64748b" }}>AC / Non-AC Preference</label>
+                        <select
+                          value={getVenuePreference(bookingPkg?.id)}
+                          onChange={(e) => changeVenuePreference(bookingPkg?.id, e.target.value)}
+                          style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "12px", marginTop: "2px", background: "white", outline: "none" }}
+                        >
+                          <option value="ac">AC Hall</option>
+                          <option value="nonac">Non-AC Hall</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="hover-button-highlight"
+                  onClick={() => setWizardStep(2)}
+                  style={{ width: "100%", padding: "12px", borderRadius: "10px", border: "none", background: "#ea580c", color: "white", fontWeight: "800", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                >
+                  Continue to Select Date Calendar <ArrowRight size={16} />
+                </button>
+              </div>
+            )}
+
+            {/* --- STEP 2: INTERACTIVE LARGE VISUAL CALENDAR --- */}
+            {wizardStep === 2 && (
+              <div>
+                <h4 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: "0 0 4px" }}>
+                  Step 3 – Select Event Date (Interactive Calendar)
+                </h4>
+                <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 14px" }}>
+                  Pick a date on the calendar below. Green dates are available, red dates are booked.
+                </p>
+
+                {/* VISUAL MONTH CALENDAR GRID */}
+                <div style={{ background: "#f8fafc", padding: "18px", borderRadius: "16px", border: "1px solid #e2e8f0", marginBottom: "20px" }}>
+                  
+                  {/* Calendar Month Header */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentMonth((prev) => (prev > 0 ? prev - 1 : 11))}
+                      style={{ border: "none", background: "#e2e8f0", padding: "6px", borderRadius: "8px", cursor: "pointer" }}
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <span style={{ fontSize: "16px", fontWeight: "800", color: "#0f172a" }}>
+                      August {currentYear}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentMonth((prev) => (prev < 11 ? prev + 1 : 0))}
+                      style={{ border: "none", background: "#e2e8f0", padding: "6px", borderRadius: "8px", cursor: "pointer" }}
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </div>
+
+                  {/* Day Names Row */}
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "6px", textAlign: "center", fontSize: "11px", fontWeight: "800", color: "#64748b", marginBottom: "8px" }}>
+                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                  </div>
+
+                  {/* Days Grid (31 Days) */}
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "6px" }}>
+                    {Array.from({ length: 31 }, (_, idx) => {
+                      const dayNum = idx + 1;
+                      const isSelected = selectedDayNumber === dayNum;
+                      const isBooked = bookedDaysList.includes(dayNum);
+                      const isLimited = limitedDaysList.includes(dayNum);
+
+                      let bg = "#dcfce7"; // Default Green (Available)
+                      let color = "#15803d";
+                      let border = "1px solid #bbf7d0";
+
+                      if (isSelected) {
+                        bg = "#2563eb"; // Blue
+                        color = "white";
+                        border = "2px solid #1d4ed8";
+                      } else if (isBooked) {
+                        bg = "#fee2e2"; // Red
+                        color = "#b91c1c";
+                        border = "1px solid #fca5a5";
+                      } else if (isLimited) {
+                        bg = "#ffedd5"; // Orange
+                        color = "#c2410c";
+                        border = "1px solid #fed7aa";
+                      }
+
+                      return (
+                        <button
+                          key={dayNum}
+                          type="button"
+                          onClick={() => setSelectedDayNumber(dayNum)}
+                          style={{
+                            height: "42px",
+                            borderRadius: "10px",
+                            background: bg,
+                            color: color,
+                            border: border,
+                            fontWeight: "800",
+                            fontSize: "13px",
+                            cursor: "pointer",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            transition: "all 0.15s ease"
+                          }}
+                        >
+                          <span>{dayNum}</span>
+                          <span style={{ fontSize: "8px", textTransform: "uppercase" }}>
+                            {isSelected ? "Selected" : (isBooked ? "Booked" : (isLimited ? "Limited" : "Avail"))}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Calendar Color Legend */}
+                  <div style={{ display: "flex", justifyContent: "space-around", fontSize: "11px", fontWeight: "700", marginTop: "14px", paddingTop: "10px", borderTop: "1px dashed #cbd5e1" }}>
+                    <span style={{ color: "#16a34a" }}>🟢 Green = Available</span>
+                    <span style={{ color: "#dc2626" }}>🔴 Red = Already Booked</span>
+                    <span style={{ color: "#ea580c" }}>🟠 Orange = Limited</span>
+                    <span style={{ color: "#2563eb" }}>🔵 Blue = Selected</span>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <button
+                    type="button"
+                    onClick={() => setWizardStep(1)}
+                    style={{ flex: 1, padding: "12px", borderRadius: "10px", border: "1px solid #cbd5e1", background: "white", color: "#475569", fontWeight: "700", cursor: "pointer" }}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    className="hover-button-highlight"
+                    onClick={handleCheckAvailability}
+                    style={{ flex: 1.5, padding: "12px", borderRadius: "10px", border: "none", background: "#ea580c", color: "white", fontWeight: "800", fontSize: "14px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                  >
+                    Check Venue Availability 🔍
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* --- STEP 3: VENUE AVAILABILITY (DYNAMICALLY FILTERED BY SELECTED CITY WITH VIEW DETAILS BUTTON) --- */}
+            {wizardStep === 3 && (
+              <div>
+                {/* IF SELECTED DATE IS BOOKED (e.g. 5, 12, 20, 30) */}
+                {bookedDaysList.includes(selectedDayNumber) ? (
+                  <div style={{ background: "#fef2f2", padding: "20px", borderRadius: "16px", border: "1px solid #fecaca", marginBottom: "20px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#dc2626", fontWeight: "800", fontSize: "16px", marginBottom: "6px" }}>
+                      <AlertTriangle size={20} />
+                      <span>❌ The selected venue is already booked on {selectedDayNumber} Aug {currentYear}.</span>
+                    </div>
+
+                    <p style={{ fontSize: "13px", color: "#991b1b", margin: "0 0 14px" }}>
+                      No banquet halls are available in {selectedCity} on this date. You can:
+                    </p>
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", fontSize: "12px", marginBottom: "16px" }}>
+                      <button
+                        type="button"
+                        onClick={() => setWizardStep(2)}
+                        style={{ padding: "10px", borderRadius: "8px", border: "1px solid #fca5a5", background: "white", color: "#991b1b", fontWeight: "700", textAlign: "left", cursor: "pointer" }}
+                      >
+                        • Select another date on calendar
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsHomeFunction(true);
+                          setSelectedVenue(null);
+                          const hasCatering = bookingPkg.includedServices.some(s => isCateringService(s));
+                          if (hasCatering) {
+                            setWizardStep("3_5_catering");
+                          } else {
+                            setWizardStep(4);
+                          }
+                        }}
+                        style={{ padding: "10px", borderRadius: "8px", border: "none", background: "#ea580c", color: "white", fontWeight: "800", textAlign: "left", cursor: "pointer" }}
+                      >
+                        • Book a 🏠 Function at Home instead
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* IF AVAILABLE VENUES FOUND FOR SELECTED CITY ✅ */
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                      <div>
+                        <h4 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: "0 0 2px" }}>
+                          Available Venues in <span style={{ color: "#ea580c" }}>{selectedCity}</span> ✅
+                        </h4>
+                        <p style={{ fontSize: "12px", color: "#64748b", margin: 0 }}>
+                          Date: {selectedDayNumber} Aug {currentYear} • Locality: {selectedArea}
+                        </p>
+                      </div>
+                      <span style={{ fontSize: "11px", background: "#dcfce7", color: "#15803d", fontWeight: "800", padding: "4px 10px", borderRadius: "6px" }}>
+                        {currentCityVenues.length} Venues Available
+                      </span>
+                    </div>
+
+                    {/* DYNAMICALLY FILTERED VENUES LIST (ONLY FOR SELECTED CITY WITH VIEW DETAILS BUTTON!) */}
+                    <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "20px" }}>
+                      {currentCityVenues.length > 0 ? (
+                        currentCityVenues.map(v => {
+                          const isSel = selectedVenue && selectedVenue.id === v.id;
+                          return (
+                            <div
+                              key={v.id}
+                              className="hover-item-box"
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                padding: "14px",
+                                borderRadius: "14px",
+                                border: isSel ? "2.5px solid #ea580c" : "1px solid #cbd5e1",
+                                background: isSel ? "#fff7ed" : "white"
+                              }}
+                            >
+                              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                                <img src={v.img} alt={v.name} style={{ width: "65px", height: "65px", borderRadius: "10px", objectFit: "cover" }} />
+                                <div>
+                                  <h5 style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", margin: "0 0 2px" }}>🏛 {v.name}</h5>
+                                  <span style={{ fontSize: "11px", color: "#64748b" }}>📍 {v.area}, {v.city} • {v.type} • 👥 {v.capacity} • ★ {v.rating}</span>
+                                </div>
+                              </div>
+
+                              {/* TWO BUTTONS: VIEW DETAILS & SELECT VENUE */}
+                              <div style={{ display: "flex", gap: "6px" }}>
+                                <button
+                                  type="button"
+                                  className="hover-button-highlight"
+                                  onClick={() => setViewingVenueDetails(v)}
+                                  style={{
+                                    padding: "6px 12px",
+                                    borderRadius: "8px",
+                                    border: "1px solid #cbd5e1",
+                                    background: "white",
+                                    color: "#475569",
+                                    fontSize: "12px",
+                                    fontWeight: "700",
+                                    cursor: "pointer",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "4px"
+                                  }}
+                                >
+                                  View Details 🔍
+                                </button>
+
+                                <button
+                                  type="button"
+                                  className="hover-button-highlight"
+                                  onClick={() => {
+                                    setSelectedVenue(v);
+                                    setIsHomeFunction(false);
+                                  }}
+                                  style={{
+                                    padding: "6px 14px",
+                                    borderRadius: "8px",
+                                    border: "none",
+                                    background: isSel ? "#ea580c" : "#f1f5f9",
+                                    color: isSel ? "white" : "#475569",
+                                    fontSize: "12px",
+                                    fontWeight: "800",
+                                    cursor: "pointer"
+                                  }}
+                                >
+                                  {isSel ? "Selected ✓" : "Select Venue"}
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <p style={{ fontSize: "13px", color: "#94a3b8" }}>No commercial venues registered in {selectedCity} yet. Use Home Function option below.</p>
+                      )}
+
+                      {/* HOME FUNCTION OPTION */}
+                      <div
+                        className="hover-item-box"
+                        onClick={() => {
+                          setIsHomeFunction(true);
+                          setSelectedVenue(null);
+                        }}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "14px",
+                          borderRadius: "14px",
+                          border: isHomeFunction ? "2.5px solid #ea580c" : "1px dashed #cbd5e1",
+                          background: isHomeFunction ? "#fff7ed" : "#f8fafc",
+                          cursor: "pointer"
+                        }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div style={{ width: "45px", height: "45px", borderRadius: "10px", background: "#ffedd5", display: "grid", placeItems: "center", color: "#ea580c" }}>
+                            <HomeIcon size={22} />
+                          </div>
+                          <div>
+                            <h5 style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", margin: "0 0 2px" }}>🏠 Function at Home ({selectedCity})</h5>
+                            <span style={{ fontSize: "11px", color: "#64748b" }}>Use your residence, backyard or private garden in {selectedCity}</span>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          style={{
+                            padding: "6px 14px",
+                            borderRadius: "8px",
+                            border: "none",
+                            background: isHomeFunction ? "#ea580c" : "#f1f5f9",
+                            color: isHomeFunction ? "white" : "#475569",
+                            fontSize: "12px",
+                            fontWeight: "800"
+                          }}
+                        >
+                          {isHomeFunction ? "Selected ✓" : "Choose Home"}
+                        </button>
+                      </div>
+
+                    </div>
+
+                    <div style={{ display: "flex", gap: "10px" }}>
+                      <button
+                        type="button"
+                        onClick={() => setWizardStep(2)}
+                        style={{ flex: 1, padding: "12px", borderRadius: "10px", border: "1px solid #cbd5e1", background: "white", color: "#475569", fontWeight: "700", cursor: "pointer" }}
+                      >
+                        Back
+                      </button>
+                      <button
+                        type="button"
+                        className="hover-button-highlight"
+                        onClick={() => {
+                          const hasCatering = bookingPkg.includedServices.some(s => isCateringService(s));
+                          if (hasCatering) {
+                            setWizardStep("3_5_catering");
+                          } else {
+                            setWizardStep(4);
+                          }
+                        }}
+                        style={{ flex: 1.5, padding: "12px", borderRadius: "10px", border: "none", background: "#ea580c", color: "white", fontWeight: "800", fontSize: "14px", cursor: "pointer" }}
+                      >
+                        {bookingPkg.includedServices.some(s => isCateringService(s)) ? "Customize Catering 🚀" : "Continue to Summary 🚀"}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* --- STEP 3.5: CATERING CUSTOMIZATION --- */}
+            {wizardStep === "3_5_catering" && (() => {
+              const parsedGuests = bookingPkg ? parseInt((bookingPkg.guests || "100").replace(/[^0-9]/g, "")) || 100 : 100;
+              const catPref = getCateringPreference(bookingPkg.id);
+              const cateringData = cateringMenuData[catPref] || cateringMenuData.both;
+              const baseCateringCost = cateringData.basePrice * parsedGuests;
+              
+              const activeExtras = getCateringExtras(bookingPkg.id);
+              const extrasTotalCost = activeExtras.reduce((sum, extraName) => {
+                 const item = cateringData.extras.find(e => e.name === extraName);
+                 return sum + (item ? item.price * parsedGuests : 0);
+              }, 0);
+              const totalCateringCost = baseCateringCost + extrasTotalCost;
+              
+              return (
+              <div>
+                <h4 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: "0 0 4px" }}>
+                  Step 3.5 – Customize Catering Menu
+                </h4>
+                <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 16px" }}>
+                  Select your food type preference and add extra items to your menu.
+                </p>
+
+                <div style={{ background: "#f8fafc", padding: "20px", borderRadius: "16px", border: "1px solid #e2e8f0", marginBottom: "20px" }}>
+                  {/* Header / Base Cost */}
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", borderBottom: "1px dashed #cbd5e1", paddingBottom: "12px" }}>
+                    <h5 style={{ fontSize: "16px", fontWeight: "800", color: "#166534", margin: 0, display: "flex", alignItems: "center", gap: "6px" }}>
+                      <CheckCircle2 size={18} /> Catering Included
+                    </h5>
+                    <span style={{ fontSize: "16px", fontWeight: "900", color: "#ea580c" }}>₹{cateringData.basePrice} / plate</span>
+                  </div>
+
+                  {/* Food Type Selector */}
+                  <div style={{ marginBottom: "20px" }}>
+                    <span style={{ fontSize: "12px", fontWeight: "700", color: "#475569", display: "block", marginBottom: "8px" }}>Food Type</span>
+                    <div style={{ display: "flex", gap: "8px", background: "#e2e8f0", padding: "4px", borderRadius: "8px" }}>
+                      {["veg", "nonveg", "both"].map(type => {
+                        const isSel = catPref === type;
+                        const label = type === "veg" ? "VEG" : (type === "nonveg" ? "NON-VEG" : "BOTH");
+                        return (
+                          <button
+                            key={type}
+                            type="button"
+                            onClick={() => {
+                              changeCateringPreference(bookingPkg.id, type);
+                              // Clear extras when changing type to avoid mismatched extras
+                              setCateringExtras(prev => ({ ...prev, [bookingPkg.id]: [] }));
+                            }}
+                            style={{
+                              flex: 1,
+                              padding: "8px",
+                              borderRadius: "6px",
+                              border: "none",
+                              background: isSel ? "white" : "transparent",
+                              color: isSel ? "#ea580c" : "#64748b",
+                              fontWeight: "800",
+                              fontSize: "12px",
+                              cursor: "pointer",
+                              boxShadow: isSel ? "0 2px 4px rgba(0,0,0,0.1)" : "none",
+                              transition: "all 0.2s"
+                            }}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Included Items */}
+                  <div style={{ marginBottom: "24px" }}>
+                    <span style={{ fontSize: "12px", fontWeight: "700", color: "#475569", display: "block", marginBottom: "8px" }}>
+                      Included in {cateringData.title}
+                    </span>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                      {cateringData.included.map((item, idx) => (
+                        <div key={idx} style={{ fontSize: "12px", color: "#15803d", fontWeight: "600", display: "flex", alignItems: "center", gap: "6px" }}>
+                          <Check size={14} /> {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Extra Items Add-ons */}
+                  <div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+                      <hr style={{ flex: 1, borderTop: "1px dashed #cbd5e1", margin: 0 }} />
+                      <span style={{ fontSize: "12px", fontWeight: "800", color: "#0f172a", textTransform: "uppercase" }}>Add Extra Items</span>
+                      <hr style={{ flex: 1, borderTop: "1px dashed #cbd5e1", margin: 0 }} />
+                    </div>
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                      {cateringData.extras.map((extra, idx) => {
+                        const isAdded = activeExtras.includes(extra.name);
+                        return (
+                          <div key={idx} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: isAdded ? "#fff7ed" : "white", border: isAdded ? "1px solid #fdba74" : "1px solid #e2e8f0", borderRadius: "8px" }}>
+                            <span style={{ fontSize: "13px", fontWeight: "700", color: "#0f172a" }}>{extra.name}</span>
+                            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                              <span style={{ fontSize: "12px", color: "#64748b", fontWeight: "600" }}>+₹{extra.price}/person</span>
+                              <button
+                                type="button"
+                                onClick={() => toggleCateringExtra(bookingPkg.id, extra.name)}
+                                style={{
+                                  padding: "4px 10px",
+                                  borderRadius: "6px",
+                                  border: "none",
+                                  background: isAdded ? "#ea580c" : "#f1f5f9",
+                                  color: isAdded ? "white" : "#475569",
+                                  fontSize: "11px",
+                                  fontWeight: "800",
+                                  cursor: "pointer"
+                                }}
+                              >
+                                {isAdded ? "Added ✓" : "Add"}
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Catering Summary Box */}
+                <div style={{ background: "#0f172a", color: "white", padding: "16px 20px", borderRadius: "16px", marginBottom: "20px" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", marginBottom: "6px", color: "#94a3b8" }}>
+                    <span>Guest Count:</span>
+                    <span style={{ fontWeight: "800", color: "white" }}>{parsedGuests}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", marginBottom: "6px" }}>
+                    <span>Base Catering (₹{cateringData.basePrice} × {parsedGuests}):</span>
+                    <span>₹{baseCateringCost.toLocaleString()}</span>
+                  </div>
+                  {activeExtras.map((extraName, idx) => {
+                     const item = cateringData.extras.find(e => e.name === extraName);
+                     const cost = (item ? item.price : 0) * parsedGuests;
+                     return (
+                        <div key={idx} style={{ display: "flex", justifyContent: "space-between", fontSize: "13px", marginBottom: "6px", color: "#fdba74" }}>
+                          <span>+ {extraName} (₹{item?.price} × {parsedGuests}):</span>
+                          <span>₹{cost.toLocaleString()}</span>
+                        </div>
+                     );
+                  })}
+                  <hr style={{ borderTop: "1px dashed #334155", margin: "10px 0" }} />
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "16px", fontWeight: "900", color: "#fbbf24" }}>
+                    <span>Catering Total:</span>
+                    <span>₹{totalCateringCost.toLocaleString()}</span>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <button
+                    type="button"
+                    onClick={() => setWizardStep(3)}
+                    style={{ flex: 1, padding: "12px", borderRadius: "10px", border: "1px solid #cbd5e1", background: "white", color: "#475569", fontWeight: "700", cursor: "pointer" }}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    className="hover-button-highlight"
+                    onClick={() => setWizardStep(4)}
+                    style={{ flex: 1.5, padding: "12px", borderRadius: "10px", border: "none", background: "#ea580c", color: "white", fontWeight: "800", fontSize: "14px", cursor: "pointer" }}
+                  >
+                    Continue to Summary 🚀
+                  </button>
+                </div>
+              </div>
+              );
+            })()}
+            
+            {/* --- STEP 4: BOOKING SUMMARY & ADVANCE PAYMENT --- */}
+            {wizardStep === 4 && (
+              <div>
+                <h4 style={{ fontSize: "18px", fontWeight: "800", color: "#0f172a", margin: "0 0 4px" }}>
+                  Step 4 – Booking Summary & Advance Payment
+                </h4>
+                <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 16px" }}>
+                  Review package details and venue confirmation before proceeding to payment.
+                </p>
+
+                <div style={{ background: "#f8fafc", padding: "18px", borderRadius: "16px", border: "1px solid #e2e8f0", marginBottom: "20px" }}>
+                  {/* Selected Venue Image Card Header */}
+                  <div style={{ display: "flex", gap: "14px", alignItems: "center", borderBottom: "1px dashed #cbd5e1", paddingBottom: "14px", marginBottom: "14px" }}>
+                    <div style={{ width: "90px", height: "70px", borderRadius: "10px", overflow: "hidden", shrink: 0 }}>
+                      <img
+                        src={isHomeFunction ? "/decorations/decor_greenery_sofa.png" : (selectedVenue ? selectedVenue.img : "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=600&q=80")}
+                        alt="Selected Venue"
+                        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      />
+                    </div>
+                    <div>
+                      <span style={{ fontSize: "11px", color: "#ea580c", fontWeight: "800", textTransform: "uppercase" }}>Selected Venue & Package</span>
+                      <h4 style={{ fontSize: "17px", fontWeight: "800", color: "#0f172a", margin: "2px 0 2px" }}>{bookingPkg.title}</h4>
+                      <p style={{ fontSize: "12px", color: "#475569", margin: 0 }}>
+                        🏛 {isHomeFunction ? `Home Residence (${homeAddress || "Client Home Address"})` : `${selectedVenue ? selectedVenue.name : "Udupi Royal Ocean Palace"}, ${selectedArea}, ${selectedCity}`}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div style={{ fontSize: "12px", display: "flex", flexDirection: "column", gap: "10px", color: "#334155", marginBottom: "14px" }}>
+                    <div>📅 <strong>Event Date:</strong> {selectedDayNumber} Aug {currentYear}</div>
+                    <div>👥 <strong>Capacity:</strong> {bookingPkg.guests}</div>
+                    <div>
+                      <span style={{ fontSize: "11px", fontWeight: "700", color: "#475569", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>
+                        Customize Included Services:
+                      </span>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px", background: "white", padding: "12px", borderRadius: "12px", border: "1px solid #cbd5e1" }}>
+                        {featuredPackagesData.find(p => p.id === bookingPkg.id).includedServices.map((service, i) => {
+                          const active = bookingPkg.includedServices.some(s => s.startsWith(service));
+                          const isCatering = isCateringService(service);
+                          const isVenue = isVenueService(service);
+                          
+                          // Find this service in the breakdown to get cost and menu
+                          const serviceBreakdown = bookingPkg.priceBreakdown?.find(b => b.originalItem === service);
+                          
+                          return (
+                            <div
+                              key={i}
+                              style={{
+                                fontSize: "11px",
+                                color: active ? "#15803d" : "#64748b",
+                                fontWeight: "600",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "flex-start",
+                                gap: "4px",
+                                padding: "6px 8px",
+                                borderRadius: "8px",
+                                background: active ? "rgba(220, 252, 231, 0.7)" : "rgba(241, 245, 249, 0.5)",
+                                border: active ? "1px solid rgba(187, 247, 208, 0.6)" : "1px dashed #cbd5e1",
+                                transition: "all 0.15s ease",
+                              }}
+                            >
+                              <div onClick={() => { if (!isMandatoryService(service)) toggleService(bookingPkg.id, service) }} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", cursor: isMandatoryService(service) ? "default" : "pointer", userSelect: "none" }} title={isMandatoryService(service) ? "This service is mandatory and cannot be removed" : (active ? "Click to remove this service" : "Click to add this service")}>
+                                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                                  {active ? (
+                                    <CheckCircle2 size={13} className="text-emerald-600 shrink-0" strokeWidth={3} />
+                                  ) : (
+                                    <span style={{
+                                      width: "12px",
+                                      height: "12px",
+                                      borderRadius: "50%",
+                                      border: "1.5px solid #94a3b8",
+                                      display: "inline-block",
+                                      flexShrink: 0
+                                    }} />
+                                  )}
+                                  <span style={{
+                                    textDecoration: active ? "none" : "line-through",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap"
+                                  }}>{service}</span>
+                                </div>
+                                {active && serviceBreakdown && (
+                                  <span style={{ fontWeight: "800", color: "#16a34a" }}>{serviceBreakdown.cost}</span>
+                                )}
+                              </div>
+                              
+                              {isCatering && active && (
+                                <div style={{ width: "100%", marginTop: "2px" }}>
+                                  <div
+                                    style={{
+                                      display: "flex",
+                                      gap: "2px",
+                                      background: "#15803d",
+                                      padding: "4px 8px",
+                                      borderRadius: "6px",
+                                      width: "max-content",
+                                      marginBottom: "4px",
+                                      color: "white",
+                                      fontSize: "9px",
+                                      fontWeight: "800",
+                                      textTransform: "uppercase"
+                                    }}
+                                  >
+                                    {getCateringPreference(bookingPkg.id) === "both" ? "Both (Veg & Non-Veg) Selected" : (getCateringPreference(bookingPkg.id) === "veg" ? "Veg Only Selected" : "Non-Veg Only Selected")}
+                                  </div>
+                                  {serviceBreakdown?.menuDetails && (
+                                    <div style={{ fontSize: "9px", color: "#475569", background: "#f8fafc", padding: "4px", borderRadius: "4px", border: "1px solid #cbd5e1", lineHeight: "1.3" }}>
+                                      <strong style={{ display: "block", marginBottom: "4px" }}>Selected Extra Items:</strong>
+                                      <div style={{ display: "flex", flexDirection: "column", gap: "3px", marginBottom: "4px" }}>
+                                        {serviceBreakdown.cateringDataNode?.extrasBreakdown?.length > 0 ? (
+                                          serviceBreakdown.cateringDataNode.extrasBreakdown.map((extra, idx) => (
+                                            <div key={idx} style={{ display: "flex", justifyContent: "space-between", color: "#ea580c", fontWeight: "700" }}>
+                                              <span>• {extra.name}</span>
+                                              <span>+₹{extra.cost.toLocaleString()}</span>
+                                            </div>
+                                          ))
+                                        ) : (
+                                          <div style={{ fontStyle: "italic", color: "#94a3b8" }}>No extra items added.</div>
+                                        )}
+                                      </div>
+                                      <div style={{ fontStyle: "italic", color: "#64748b", marginTop: "6px", borderTop: "1px dashed #cbd5e1", paddingTop: "4px" }}>
+                                        <strong>Base Menu Included:</strong> {serviceBreakdown.menuDetails}
+                                      </div>
+                                      <button
+                                        type="button"
+                                        onClick={() => setWizardStep("3_5_catering")}
+                                        style={{ marginTop: "6px", width: "100%", padding: "4px", background: "#ea580c", color: "white", border: "none", borderRadius: "4px", fontSize: "9px", fontWeight: "800", cursor: "pointer" }}
+                                      >
+                                        Edit Catering Menu ✏️
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
+                              {isVenue && active && (
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    gap: "2px",
+                                    marginTop: "2px",
+                                    background: "#0369a1",
+                                    padding: "4px 8px",
+                                    borderRadius: "6px",
+                                    width: "max-content",
+                                    color: "white",
+                                    fontSize: "9px",
+                                    fontWeight: "800",
+                                    textTransform: "uppercase"
+                                  }}
+                                >
+                                  {getVenuePreference(bookingPkg.id) === "ac" ? "AC Hall Selected" : "Non-AC Hall Selected"}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ background: "white", padding: "14px", borderRadius: "12px", border: "1px solid #cbd5e1", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", textAlign: "center" }}>
+                    <div>
+                      <span style={{ fontSize: "11px", color: "#64748b", display: "block" }}>Total Amount</span>
+                      <span style={{ fontSize: "16px", fontWeight: "900", color: "#0f172a" }}>{bookingPkg.priceStr}</span>
+                    </div>
+
+                    <div style={{ borderLeft: "1px solid #e2e8f0", borderRight: "1px solid #e2e8f0" }}>
+                      <span style={{ fontSize: "11px", color: "#16a34a", fontWeight: "700", display: "block" }}>Advance Pay Now</span>
+                      <span style={{ fontSize: "17px", fontWeight: "900", color: "#ea580c" }}>₹ 50,000</span>
+                    </div>
+
+                    <div>
+                      <span style={{ fontSize: "11px", color: "#dc2626", fontWeight: "700", display: "block" }}>Remaining Due</span>
+                      <span style={{ fontSize: "16px", fontWeight: "900", color: "#dc2626" }}>
+                        ₹ {(bookingPkg.price - 50000).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const hasCatering = bookingPkg.includedServices.some(s => isCateringService(s));
+                      if (hasCatering) {
+                        setWizardStep("3_5_catering");
+                      } else {
+                        setWizardStep(3);
+                      }
+                    }}
+                    style={{ flex: 1, padding: "12px", borderRadius: "10px", border: "1px solid #cbd5e1", background: "white", color: "#475569", fontWeight: "700", cursor: "pointer" }}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    className="hover-button-highlight"
+                    onClick={handleFinalBookingProceed}
+                    style={{
+                      flex: 1.5,
+                      padding: "12px",
+                      borderRadius: "10px",
+                      border: "none",
+                      background: "linear-gradient(135deg, #ea580c 0%, #c2410c 100%)",
+                      color: "white",
+                      fontWeight: "800",
+                      fontSize: "14px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: "6px",
+                      boxShadow: "0 6px 16px rgba(234, 88, 12, 0.25)"
+                    }}
+                  >
+                    <CreditCard size={18} /> Proceed to Advance Payment 🚀
+                  </button>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+      )}
+
+      {/* 4. VENUE DETAILS POPUP MODAL (FOR VIEW DETAILS ON VENUE CARDS) */}
+      {viewingVenueDetails && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(15, 23, 42, 0.8)",
+          backdropFilter: "blur(8px)",
+          zIndex: 100000,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "20px"
+        }}>
+          <div style={{
+            background: "white",
+            borderRadius: "24px",
+            maxWidth: "600px",
+            width: "100%",
+            maxHeight: "90vh",
+            overflowY: "auto",
+            padding: "28px",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.4)",
+            position: "relative",
+            border: "1px solid rgba(255, 255, 255, 0.8)"
+          }}>
+            <button
+              type="button"
+              onClick={() => setViewingVenueDetails(null)}
+              style={{ position: "absolute", top: "20px", right: "20px", background: "#f1f5f9", border: "none", borderRadius: "50%", padding: "8px", cursor: "pointer", color: "#475569" }}
+            >
+              <X size={20} />
+            </button>
+
+            {/* Venue Image Showcase */}
+            <div style={{ width: "100%", height: "200px", borderRadius: "16px", overflow: "hidden", marginBottom: "20px", position: "relative" }}>
+              <img src={viewingVenueDetails.img} alt={viewingVenueDetails.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+              
+              <span style={{
+                position: "absolute",
+                bottom: "12px",
+                right: "12px",
+                background: "rgba(15, 23, 42, 0.85)",
+                color: "#fbbf24",
+                fontSize: "12px",
+                fontWeight: "800",
+                padding: "6px 12px",
+                borderRadius: "10px",
+                display: "flex",
+                alignItems: "center",
+                gap: "4px"
+              }}>
+                <Star size={14} fill="#fbbf24" /> {viewingVenueDetails.rating} Rating
+              </span>
+            </div>
+
+            <h3 style={{ fontSize: "22px", fontWeight: "800", color: "#0f172a", margin: "0 0 4px" }}>
+              🏛 {viewingVenueDetails.name}
+            </h3>
+            
+            <p style={{ fontSize: "13px", color: "#ea580c", fontWeight: "700", margin: "0 0 16px" }}>
+              📍 {viewingVenueDetails.area}, {viewingVenueDetails.city} • {viewingVenueDetails.type}
+            </p>
+
+            {/* Specs Summary Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", fontSize: "12px", marginBottom: "20px" }}>
+              <div style={{ background: "#f8fafc", padding: "10px 12px", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ color: "#64748b", fontWeight: "600" }}>👥 Capacity</span>
+                <p style={{ margin: "2px 0 0", fontWeight: "800", color: "#0f172a" }}>{viewingVenueDetails.capacity}</p>
+              </div>
+              <div style={{ background: "#f8fafc", padding: "10px 12px", borderRadius: "10px", border: "1px solid #e2e8f0" }}>
+                <span style={{ color: "#64748b", fontWeight: "600" }}>🚗 Parking</span>
+                <p style={{ margin: "2px 0 0", fontWeight: "800", color: "#0f172a" }}>{viewingVenueDetails.parking}</p>
+              </div>
+              <div style={{ background: "#f8fafc", padding: "10px 12px", borderRadius: "10px", border: "1px solid #e2e8f0", gridColumn: "span 2" }}>
+                <span style={{ color: "#64748b", fontWeight: "600" }}>🛏 Accommodations & Rooms</span>
+                <p style={{ margin: "2px 0 0", fontWeight: "800", color: "#0f172a" }}>{viewingVenueDetails.rooms}</p>
+              </div>
+            </div>
+
+            {/* Venue Amenities & Features Checklist */}
+            <div style={{ background: "#fff7ed", padding: "16px", borderRadius: "14px", border: "1px solid #ffedd5", marginBottom: "20px" }}>
+              <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#c2410c", margin: "0 0 10px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <Sparkles size={16} /> Venue Amenities & Features Included
+              </h4>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                {(viewingVenueDetails.features || ["Air Conditioned Hall", "Stage Lighting", "Dining Space", "Audio System"]).map((ft, i) => (
+                  <div key={i} style={{ fontSize: "12px", color: "#7c2d12", fontWeight: "600", display: "flex", alignItems: "center", gap: "6px" }}>
+                    <Check size={14} className="text-emerald-600 shrink-0" strokeWidth={3} /> {ft}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                type="button"
+                onClick={() => setViewingVenueDetails(null)}
+                style={{ flex: 1, padding: "12px", borderRadius: "10px", border: "1px solid #cbd5e1", background: "white", color: "#475569", fontWeight: "700", cursor: "pointer" }}
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                className="hover-button-highlight"
+                onClick={() => {
+                  setSelectedVenue(viewingVenueDetails);
+                  setIsHomeFunction(false);
+                  setViewingVenueDetails(null);
+                }}
+                style={{ flex: 1.5, padding: "12px", borderRadius: "10px", border: "none", background: "#ea580c", color: "white", fontWeight: "800", fontSize: "14px", cursor: "pointer" }}
+              >
+                Select This Venue ✓
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* 5. INTERACTIVE RAZORPAY PAYMENT GATEWAY CHECKOUT MODAL */}
+      {showRazorpayModal && pendingPaymentData && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(15, 23, 42, 0.85)",
+          backdropFilter: "blur(10px)",
+          zIndex: 100005,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "20px"
+        }}>
+          <div style={{
+            background: "white",
+            borderRadius: "20px",
+            maxWidth: "480px",
+            width: "100%",
+            overflow: "hidden",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
+            position: "relative",
+            border: "1px solid rgba(255, 255, 255, 0.9)"
+          }}>
+            {/* RAZORPAY BRANDING HEADER */}
+            <div style={{ background: "#0c2340", padding: "20px 24px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <div style={{ background: "#0066ff", color: "white", padding: "6px 10px", borderRadius: "8px", fontWeight: "900", fontSize: "16px", letterSpacing: "0.5px" }}>
+                  Razorpay
+                </div>
+                <div>
+                  <span style={{ fontSize: "12px", color: "#94a3b8", display: "block" }}>Trusted Payment Gateway</span>
+                  <h4 style={{ fontSize: "14px", fontWeight: "800", margin: 0, color: "#f8fafc" }}>EMS Booking Payment</h4>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowRazorpayModal(false)}
+                style={{ background: "rgba(255,255,255,0.1)", border: "none", borderRadius: "50%", padding: "6px", cursor: "pointer", color: "#cbd5e1" }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* AMOUNT & ORDER SUMMARY */}
+            <div style={{ background: "#f8fafc", padding: "16px 24px", borderBottom: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <span style={{ fontSize: "11px", color: "#64748b", textTransform: "uppercase", fontWeight: "700" }}>Paying Advance For</span>
+                <h5 style={{ fontSize: "15px", fontWeight: "800", color: "#0f172a", margin: "2px 0 0" }}>{pendingPaymentData.eventName}</h5>
+              </div>
+
+              <div style={{ textAlign: "right" }}>
+                <span style={{ fontSize: "11px", color: "#16a34a", fontWeight: "700" }}>Advance Deposit</span>
+                <div style={{ fontSize: "20px", fontWeight: "900", color: "#0c2340" }}>
+                  ₹ 50,000
+                </div>
+              </div>
+            </div>
+
+            {/* PAYMENT METHOD TABS */}
+            <div style={{ padding: "20px 24px" }}>
+              <span style={{ fontSize: "11px", color: "#64748b", fontWeight: "800", textTransform: "uppercase", display: "block", marginBottom: "10px" }}>
+                Select Payment Option
+              </span>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "16px" }}>
+                <button
+                  type="button"
+                  onClick={() => setRazorpayMethod("upi")}
+                  style={{
+                    padding: "10px 8px",
+                    borderRadius: "10px",
+                    border: razorpayMethod === "upi" ? "2px solid #0066ff" : "1px solid #cbd5e1",
+                    background: razorpayMethod === "upi" ? "#eff6ff" : "white",
+                    color: razorpayMethod === "upi" ? "#0066ff" : "#475569",
+                    fontWeight: "800",
+                    fontSize: "12px",
+                    cursor: "pointer"
+                  }}
+                >
+                  📱 UPI / QR
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setRazorpayMethod("card")}
+                  style={{
+                    padding: "10px 8px",
+                    borderRadius: "10px",
+                    border: razorpayMethod === "card" ? "2px solid #0066ff" : "1px solid #cbd5e1",
+                    background: razorpayMethod === "card" ? "#eff6ff" : "white",
+                    color: razorpayMethod === "card" ? "#0066ff" : "#475569",
+                    fontWeight: "800",
+                    fontSize: "12px",
+                    cursor: "pointer"
+                  }}
+                >
+                  💳 Card
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setRazorpayMethod("netbanking")}
+                  style={{
+                    padding: "10px 8px",
+                    borderRadius: "10px",
+                    border: razorpayMethod === "netbanking" ? "2px solid #0066ff" : "1px solid #cbd5e1",
+                    background: razorpayMethod === "netbanking" ? "#eff6ff" : "white",
+                    color: razorpayMethod === "netbanking" ? "#0066ff" : "#475569",
+                    fontWeight: "800",
+                    fontSize: "12px",
+                    cursor: "pointer"
+                  }}
+                >
+                  🏦 Net Banking
+                </button>
+              </div>
+
+              {/* METHOD INPUT DETAILS */}
+              {razorpayMethod === "upi" && (
+                <div style={{ background: "#f8fafc", padding: "14px", borderRadius: "12px", border: "1px solid #e2e8f0", marginBottom: "20px" }}>
+                  <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", display: "block", marginBottom: "4px" }}>Enter UPI ID (Google Pay / PhonePe / Paytm)</label>
+                  <input
+                    type="text"
+                    value={upiIdInput}
+                    onChange={(e) => setUpiIdInput(e.target.value)}
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "13px", fontWeight: "600" }}
+                  />
+                  <span style={{ fontSize: "10px", color: "#16a34a", display: "block", marginTop: "4px" }}>✓ Verified Instant UPI Transfer</span>
+                </div>
+              )}
+
+              {razorpayMethod === "card" && (
+                <div style={{ background: "#f8fafc", padding: "14px", borderRadius: "12px", border: "1px solid #e2e8f0", marginBottom: "20px" }}>
+                  <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", display: "block", marginBottom: "4px" }}>Card Number</label>
+                  <input
+                    type="text"
+                    defaultValue="4532 •••• •••• 8892"
+                    style={{ width: "100%", padding: "8px 12px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "13px", fontWeight: "600", marginBottom: "8px" }}
+                  />
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
+                    <input type="text" defaultValue="11 / 28" style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "12px" }} />
+                    <input type="password" defaultValue="•••" style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "12px" }} />
+                  </div>
+                </div>
+              )}
+
+              {razorpayMethod === "netbanking" && (
+                <div style={{ background: "#f8fafc", padding: "14px", borderRadius: "12px", border: "1px solid #e2e8f0", marginBottom: "20px" }}>
+                  <label style={{ fontSize: "11px", fontWeight: "700", color: "#475569", display: "block", marginBottom: "4px" }}>Popular Banks</label>
+                  <select style={{ width: "100%", padding: "8px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "12px" }}>
+                    <option>HDFC Bank</option>
+                    <option>ICICI Bank</option>
+                    <option>State Bank of India (SBI)</option>
+                    <option>Axis Bank</option>
+                    <option>Kotak Mahindra Bank</option>
+                  </select>
+                </div>
+              )}
+
+              {/* PAY NOW BUTTON */}
+              <button
+                type="button"
+                className="hover-button-highlight"
+                onClick={handleExecuteRazorpayPayment}
+                disabled={isProcessingRazorpay}
+                style={{
+                  width: "100%",
+                  padding: "14px",
+                  borderRadius: "12px",
+                  border: "none",
+                  background: isProcessingRazorpay ? "#94a3b8" : "linear-gradient(135deg, #0066ff 0%, #0044cc 100%)",
+                  color: "white",
+                  fontWeight: "900",
+                  fontSize: "15px",
+                  cursor: isProcessingRazorpay ? "not-allowed" : "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  boxShadow: "0 6px 18px rgba(0, 102, 255, 0.3)"
+                }}
+              >
+                {isProcessingRazorpay ? (
+                  <>Processing Authorization... ⏳</>
+                ) : (
+                  <>Pay ₹ 50,000 via Razorpay 🔒</>
+                )}
+              </button>
+
+              <div style={{ marginTop: "12px", textAlign: "center", fontSize: "11px", color: "#94a3b8", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}>
+                <ShieldCheck size={13} className="text-emerald-600" /> 256-Bit Bank Grade SSL Encryption
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
+

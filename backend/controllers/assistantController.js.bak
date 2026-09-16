@@ -1,0 +1,262 @@
+const Venue = require("../models/Venue");
+const Package = require("../models/Package");
+const Booking = require("../models/Booking");
+
+// Basic rule-based NLP parser
+function parseMessage(message, currentContext) {
+  const msg = message.toLowerCase();
+  const context = { ...currentContext };
+  
+  // 1. Check for non-event questions
+  const nonEventKeywords = ["weather", "joke", "news", "programming", "code", "politics", "movie", "sports"];
+  if (nonEventKeywords.some(kw => msg.includes(kw))) {
+    return { isEventRelated: false, context };
+  }
+
+  // Event keywords
+  const eventKeywords = ["wedding", "birthday", "engagement", "reception", "conference", "party", "event", "venue", "catering", "food", "decoration", "cake", "photography", "dj", "sound", "lighting", "transport", "rooms", "seating", "package", "budget", "book", "planning", "hall"];
+  
+  // If explicitly asking for help, let it pass
+  const isHelpRequest = msg.includes("need help") || msg.includes("what can you do");
+  
+  if (!isHelpRequest && !eventKeywords.some(kw => msg.includes(kw)) && !context.eventType) {
+      // If it doesn't look like an event question and we don't have context, reject.
+      // But if we already are in a flow (have context), we might be answering a follow-up.
+      if(Object.keys(context).length === 0) {
+          return { isEventRelated: false, context };
+      }
+  }
+
+  // Extract Event Type
+  const types = ["wedding", "birthday", "engagement", "reception", "conference", "party"];
+  types.forEach(t => {
+    if (msg.includes(t)) {
+      context.eventType = t.charAt(0).toUpperCase() + t.slice(1);
+    }
+  });
+
+  // Extract Budget
+  // matches "2 lakh", "200000", "2 lakhs", "50k", "50000"
+  const budgetMatch = msg.match(/(?:budget.*?|within.*?|for.*?)(?:rs\.?|inr|₹)?\s*([\d,]+)\s*(lakh|k)?/i);
+  if (budgetMatch) {
+    let num = parseInt(budgetMatch[1].replace(/,/g, ''));
+    if (budgetMatch[2]) {
+      const multiplier = budgetMatch[2].toLowerCase() === 'lakh' ? 100000 : 1000;
+      num = num * multiplier;
+    }
+    context.budget = num;
+  } else {
+      const budgetMatch2 = msg.match(/(?:rs\.?|inr|₹)\s*([\d,]+)\s*(lakh|k)?/i);
+      if(budgetMatch2) {
+          let num = parseInt(budgetMatch2[1].replace(/,/g, ''));
+          if (budgetMatch2[2]) {
+            const multiplier = budgetMatch2[2].toLowerCase() === 'lakh' ? 100000 : 1000;
+            num = num * multiplier;
+          }
+          context.budget = num;
+      }
+  }
+
+  // Extract Guests
+  const guestMatch = msg.match(/(\d+)\s*(guest|pax|people|person)/i);
+  if (guestMatch) {
+    context.guests = parseInt(guestMatch[1]);
+  }
+
+  // Extract Date (Basic "14 February", "14th feb", "2026-07-17")
+  const dateMatch = msg.match(/(\d{1,2}(?:st|nd|rd|th)?\s+(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?))/i);
+  if (dateMatch) {
+    context.dateStr = dateMatch[1];
+  }
+  
+  // Modification intents
+  if (msg.includes("bigger hall")) {
+      context.guests = (context.guests || 100) + 100;
+  }
+  if (msg.includes("cheaper decoration") || msg.includes("make decoration cheaper")) {
+      context.cheapDecoration = true;
+  }
+  if (msg.includes("remove dj")) {
+      context.services = (context.services || []).filter(s => s !== "dj");
+  }
+  if (msg.includes("add photography")) {
+      context.services = context.services || [];
+      if(!context.services.includes("photography")) context.services.push("photography");
+  }
+
+  // Service requests
+  const servicesList = ["food", "catering", "decoration", "hall", "dj", "photography", "cake"];
+  context.services = context.services || [];
+  servicesList.forEach(s => {
+      if (msg.includes(s) && !context.services.includes(s)) {
+          context.services.push(s);
+      }
+  });
+  
+  if (msg.includes("everything") || msg.includes("plan my") || msg.includes("plan complete")) {
+      context.services = ["hall", "catering", "decoration", "dj", "photography", "cake"];
+  }
+
+  if (msg.includes("package")) {
+      context.wantsPackage = true;
+  }
+
+  return { isEventRelated: true, context };
+}
+
+exports.chat = async (req, res) => {
+  try {
+    const { message, context: currentContext = {} } = req.body;
+    
+    if (!message) {
+      return res.status(400).json({ success: false, message: "Message is required" });
+    }
+
+    const { isEventRelated, context } = parseMessage(message, currentContext);
+
+    if (!isEventRelated) {
+      return res.json({
+        success: true,
+        reply: "I'm your Event Planning Assistant. I can help only with event-related questions. Would you like help with a venue, catering, decoration, photography, DJ, transport, or a complete event package?",
+        context: currentContext,
+        recommendations: []
+      });
+    }
+
+    // Follow-up Logic
+    if (context.services && context.services.includes("hall") && !context.guests) {
+        return res.json({
+            success: true,
+            reply: "I'd love to help you find a venue. Roughly how many guests are you expecting?",
+            context,
+            recommendations: []
+        });
+    }
+
+    if (context.eventType && !context.dateStr && !context.guests && !context.budget && (!context.services || context.services.length === 0)) {
+        return res.json({
+            success: true,
+            reply: `A ${context.eventType}! That's exciting. To give you the best recommendations, could you tell me your estimated guest count or budget?`,
+            context,
+            recommendations: []
+        });
+    }
+
+    // If we have enough info, fetch recommendations from DB
+    let recommendations = [];
+    let reply = "Here are some options based on your requirements:";
+
+    if (context.wantsPackage) {
+        const packages = await Package.find({ status: "Active" }).limit(3);
+        if (packages.length > 0) {
+            reply = "I found some great event packages for you.";
+            recommendations = packages.map(p => ({
+                type: "Package",
+                id: p._id,
+                name: p.name,
+                image: p.image || (p.galleryImages && p.galleryImages[0]) || "https://images.unsplash.com/photo-1511578314322-379afb476865",
+                capacity: p.maxGuests || 500,
+                price: p.offerPrice || p.originalPrice,
+                availability: "Available",
+                score: 90,
+                details: p.shortDescription || "Comprehensive event package",
+                data: p
+            }));
+        } else {
+            reply = "I couldn't find any active packages right now. Would you like me to build a custom plan for you?";
+        }
+    } else {
+        // Find Venue
+        let query = { status: "Available" };
+        if (context.guests) {
+            query.capacity = { $gte: context.guests };
+        }
+        
+        const venues = await Venue.find(query).sort({ capacity: 1 }).limit(3);
+        
+        if (venues.length > 0) {
+            reply = "I found some suitable options for your event.";
+            
+            recommendations = venues.map(v => {
+                // Estimate other costs based on context to create a "Complete Plan"
+                let cateringCost = 0;
+                let decCost = 0;
+                let otherCost = 0;
+                let estimatedTotal = v.price;
+
+                if (context.services && context.services.length > 0) {
+                    if (context.services.includes("food") || context.services.includes("catering")) {
+                        cateringCost = (context.guests || 100) * 450; 
+                        estimatedTotal += cateringCost;
+                    }
+                    if (context.services.includes("decoration")) {
+                        decCost = context.cheapDecoration ? 15000 : 45000;
+                        estimatedTotal += decCost;
+                    }
+                    if (context.services.includes("dj")) {
+                        otherCost += 15000;
+                    }
+                    if (context.services.includes("photography")) {
+                        otherCost += 25000;
+                    }
+                    if (context.services.includes("cake")) {
+                        otherCost += 3000;
+                    }
+                    estimatedTotal += otherCost;
+                }
+
+                // Calculate Score
+                let score = 100;
+                if (context.budget) {
+                    if (estimatedTotal > context.budget) {
+                        score -= 20; 
+                    } else if (estimatedTotal < context.budget * 0.5) {
+                        score -= 10;
+                    }
+                }
+                if (context.guests && v.capacity > context.guests * 3) {
+                    score -= 10; // too big
+                }
+
+                return {
+                    type: "VenuePlan",
+                    id: v._id,
+                    name: v.name,
+                    image: (v.images && v.images[0]) || "https://images.unsplash.com/photo-1519167758481-83f550bb49b3",
+                    capacity: v.capacity,
+                    price: estimatedTotal,
+                    venuePrice: v.price,
+                    cateringCost: cateringCost,
+                    decorationCost: decCost,
+                    otherCost: otherCost,
+                    availability: "Available",
+                    score: Math.max(50, score),
+                    location: v.location,
+                    data: v
+                };
+            });
+            
+            // Sort by score
+            recommendations.sort((a, b) => b.score - a.score);
+
+        } else {
+            reply = "I couldn't find any venues matching your capacity or criteria. Could you try adjusting your requirements (e.g. fewer guests)?";
+        }
+    }
+
+    if(message.toLowerCase().includes("need help") || message.toLowerCase().includes("what can you do")) {
+        reply = "I'm your Smart Event Assistant! I can help you find venues, suggest catering & decoration options, or build a complete event package that fits your budget. What are you planning?";
+    }
+
+    res.json({
+      success: true,
+      reply,
+      context,
+      recommendations
+    });
+
+  } catch (error) {
+    console.error("Smart Assistant Error:", error);
+    res.status(500).json({ success: false, message: "Server error processing request", error: error.message, stack: error.stack });
+  }
+};
