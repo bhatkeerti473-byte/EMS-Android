@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">EMS Android</string>
+    <string name="title_activity_main">EMS Android</string>
+    <string name="package_name">com.ems.android</string>
+    <string name="custom_url_scheme">com.ems.android</string>
+</resources>
