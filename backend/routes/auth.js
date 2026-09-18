@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const svgCaptcha = require('svg-captcha');
-const { register, login, google, sendOtp, verifyOtpAndReset, debugGetOtp, verifyEmail } = require('../controllers/authController');
+const { register, login, google, googleMobile, sendOtp, verifyOtpAndReset, debugGetOtp, verifyEmail } = require('../controllers/authController');
 const User = require('../models/User');
 
 // Global map tracker to keep track of valid active CAPTCHA text solutions
@@ -45,6 +45,11 @@ router.get('/captcha', (req, res) => {
 // ==========================================
 const verifyCaptchaMiddleware = (req, res, next) => {
     const { captchaInput, captchaId } = req.body;
+
+    // Allow client-verified visual fallback captcha
+    if (captchaId && captchaId.startsWith('local-')) {
+        return next();
+    }
 
     // 1. Verify if the CAPTCHA session exists and isn't expired
     const correctAnswer = activeCaptchas.get(captchaId);

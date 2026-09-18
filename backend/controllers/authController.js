@@ -286,6 +286,45 @@ exports.google = async (req, res) => {
   }
 };
 
+exports.googleMobile = async (req, res) => {
+  try {
+    const { email, name, picture } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: 'Email is required' });
+
+    const normalizedEmail = email.trim().toLowerCase();
+    let user = await User.findOne({ email: normalizedEmail });
+
+    if (!user) {
+      user = new User({
+        name: name || 'Google User',
+        email: normalizedEmail,
+        password: await bcrypt.hash(Math.random().toString(36), 10),
+        isVerified: true
+      });
+      await user.save();
+      saveUserToVisualBackend({ name: user.name, email: user.email });
+    }
+
+    const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    res.json({
+      success: true,
+      token: jwtToken,
+      user: {
+        _id: user._id,
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        photo: picture || user.photo || null,
+        role: user.role || 'client',
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error('Google mobile auth error:', error);
+    res.status(500).json({ success: false, message: 'Authentication failed' });
+  }
+};
+
 // --- VERIFICATION LINK HANDLER ---
 // Resilient against fast double-fetches caused by React.StrictMode
 exports.verifyEmail = async (req, res) => {

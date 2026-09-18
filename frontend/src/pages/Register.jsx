@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AndroidBackButton from "../components/AndroidBackButton";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -79,7 +80,8 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#0a0f24] font-sans relative overflow-hidden">
+    <div className="min-h-screen flex bg-[#0a0f24] font-sans relative overflow-y-auto">
+      <AndroidBackButton to="/login" />
       <div className="absolute inset-0 z-0">
         <img
           src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1920&q=80"
@@ -89,7 +91,7 @@ const Register = () => {
         <div className="absolute inset-0 bg-gradient-to-tr from-[#0a0f24] via-[#0d153a]/90 to-[#0a0f24]/80"></div>
       </div>
 
-      <div className="relative z-10 w-full flex flex-col lg:flex-row items-center justify-center p-6 md:p-12 lg:gap-16 max-w-7xl mx-auto">
+      <div className="relative z-10 w-full flex flex-col lg:flex-row items-center justify-center p-3.5 sm:p-6 md:p-12 lg:gap-16 max-w-7xl mx-auto py-6 sm:py-10">
         <div className="hidden lg:flex flex-col text-white max-w-md space-y-6">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-xl">
@@ -104,15 +106,15 @@ const Register = () => {
           </p>
         </div>
 
-        <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-8 text-white shadow-2xl shadow-black/40">
-          <div className="space-y-2 mb-6">
-            <h2 className="text-2xl font-bold tracking-tight">Get Started</h2>
-            <p className="text-sm text-slate-400">
+        <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-8 text-white shadow-2xl shadow-black/40">
+          <div className="space-y-1 mb-3.5 sm:mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Get Started</h2>
+            <p className="text-xs sm:text-sm text-slate-400">
               Create your account to continue your journey with us.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                 Registering As
@@ -143,11 +145,11 @@ const Register = () => {
                 value={formData.username}
                 onChange={handleChange}
                 placeholder="Enter your name"
-                className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm"
+                className="w-full px-3.5 py-2 sm:py-2.5 sm:px-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-xs sm:text-sm"
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-1">
                 <label className="text-xs font-medium text-slate-300">Email Address</label>
                 <input
@@ -157,7 +159,7 @@ const Register = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="ex: abc@gmail.com"
-                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm"
+                  className="w-full px-3.5 py-2 sm:py-2.5 sm:px-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-xs sm:text-sm"
                 />
               </div>
               <div className="space-y-1">
@@ -172,7 +174,7 @@ const Register = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="1234567890"
-                  className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm"
+                  className="w-full px-3.5 py-2 sm:py-2.5 sm:px-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-xs sm:text-sm"
                 />
               </div>
             </div>
@@ -186,7 +188,7 @@ const Register = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="Enter password"
-                className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm"
+                className="w-full px-3.5 py-2 sm:py-2.5 sm:px-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-xs sm:text-sm"
               />
             </div>
 
@@ -199,12 +201,12 @@ const Register = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 placeholder="Confirm password"
-                className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-sm"
+                className="w-full px-3.5 py-2 sm:py-2.5 sm:px-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-xs sm:text-sm"
               />
             </div>
 
             {error && (
-              <p className="text-sm text-red-100 bg-red-500/20 border border-red-300/30 rounded-lg px-3 py-2">
+              <p className="text-xs text-red-100 bg-red-500/20 border border-red-300/30 rounded-lg px-3 py-2">
                 {error}
               </p>
             )}
@@ -212,7 +214,7 @@ const Register = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] transition-all text-white font-semibold text-sm rounded-xl mt-2 tracking-wide uppercase disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 active:scale-[0.99] transition-all text-white font-semibold text-xs sm:text-sm rounded-xl mt-1 sm:mt-2 tracking-wide uppercase disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-blue-600/30"
             >
               {loading ? "CREATING ACCOUNT..." : "Create Account"}
             </button>

@@ -24,7 +24,7 @@ const { Server } = require("socket.io");
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   }
@@ -57,7 +57,7 @@ connectDB();
 // Middleware
 // =========================
 app.use(cors({
-  origin: "http://localhost:3000", // Explicitly allows your React frontend port
+  origin: true, // Allow mobile app (localhost, capacitor://localhost, LAN IPs) and React web frontend
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
@@ -214,42 +214,8 @@ app.use("/api/packages", require("./routes/packages"));
 app.use("/api/assistant", require("./routes/assistant"));
 app.use("/api/staff-assignments", require("./routes/staffAssignmentRoutes"));
 
-// =========================
-// Google Authentication Pipeline
-// =========================
-app.post("/api/auth/google", async (req, res) => {
-  const { token } = req.body;
-
-  if (!token) {
-    return res.status(400).json({ success: false, message: "Token is required" });
-  }
-
-  try {
-    const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`);
-    const profile = await response.json();
-
-    if (!profile.email) {
-      return res.status(400).json({ success: false, message: "Invalid or expired access token" });
-    }
-
-    const userData = {
-      email: profile.email,
-      name: profile.name,
-      avatar: profile.picture,
-    };
-
-    console.log("Successfully Authenticated Google User:", userData);
-
-    res.status(200).json({
-      success: true,
-      message: "User validated successfully",
-      user: userData,
-    });
-  } catch (error) {
-    console.error("Internal verification error:", error.message);
-    res.status(500).json({ success: false, error: "Authentication pipeline failed" });
-  }
-});
+// NOTE: Google auth is handled by routes/auth.js → router.post('/google', google)
+// mounted at /api/auth — no duplicate needed here.
 
 // =========================
 // Global Fallbacks & Routing Handles

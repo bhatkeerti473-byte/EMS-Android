@@ -183,18 +183,18 @@ function Home() {
         </div>
 
         <div className="relative mx-auto flex min-h-screen max-w-[1450px] flex-col px-5 pb-10 pt-6 sm:px-8 lg:px-10">
-          <header className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-            <Link to="/home" className="flex items-center gap-3 text-white">
-              <PremiumLogo size="60px" />
+          <header className="flex items-center justify-between gap-4 py-2">
+            <Link to="/home" className="flex items-center gap-2.5 text-white">
+              <PremiumLogo size="50px" />
               <div>
-                <p className="text-lg font-black uppercase tracking-[0.18em] golden-text-animate">Event</p>
-                <p className="text-[11px] font-semibold uppercase tracking-[0.38em] golden-text-animate">
+                <p className="text-base sm:text-lg font-black uppercase tracking-[0.18em] golden-text-animate">Event</p>
+                <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.3em] sm:tracking-[0.38em] golden-text-animate">
                   Management System
                 </p>
               </div>
             </Link>
 
-            <nav className="flex flex-wrap items-center gap-3 lg:gap-8">
+            <nav className="hidden md:flex items-center gap-6 lg:gap-8">
               {navLinks.map(([label, id]) => (
                 <button
                   key={label}
@@ -210,9 +210,9 @@ function Home() {
 
             <Link
               to="/login"
-              className="inline-flex w-fit items-center gap-2 rounded-xl border border-white/15 bg-pink-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-pink-500/30 transition hover:-translate-y-0.5 hover:bg-pink-400"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-pink-500 px-3.5 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-pink-500/30 transition hover:-translate-y-0.5 hover:bg-pink-400 shrink-0"
             >
-              <svg viewBox="0 0 24 24" className="h-4.5 w-4.5 fill-none stroke-current stroke-[1.9]">
+              <svg viewBox="0 0 24 24" className="h-4 w-4 fill-none stroke-current stroke-[1.9]">
                 <path d="M10 17l5-5-5-5" />
                 <path d="M15 12H4" />
                 <path d="M20 4v16" />
@@ -221,39 +221,39 @@ function Home() {
             </Link>
           </header>
 
-          <div className="mt-14 grid flex-1 items-center gap-12 lg:grid-cols-[1.02fr_0.98fr]">
+          <div className="mt-6 sm:mt-14 grid flex-1 items-center gap-8 lg:gap-12 lg:grid-cols-[1.02fr_0.98fr]">
             <div className="max-w-3xl">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/78 backdrop-blur-md">
+              <div className="mb-4 sm:mb-6 inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/8 px-3.5 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.25em] sm:tracking-[0.3em] text-white/78 backdrop-blur-md">
                 Premium event planning platform
               </div>
-              <h1 className="max-w-2xl text-5xl font-black uppercase leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
+              <h1 className="max-w-2xl text-3xl sm:text-5xl lg:text-7xl font-black uppercase leading-[1.05] sm:leading-[0.95] tracking-tight">
                 <span className="block text-white">Plan, Manage and Create</span>
                 <span className="block bg-gradient-to-r from-pink-400 via-fuchsia-400 to-amber-300 bg-clip-text text-transparent">
                   Unforgettable Events
                 </span>
               </h1>
-              <p className="mt-6 max-w-2xl text-base leading-8 text-white/78 sm:text-lg">
+              <p className="mt-4 sm:mt-6 max-w-2xl text-sm leading-6 text-white/78 sm:text-lg sm:leading-8">
                 A complete event management platform to organize events, manage venues, coordinate teams, and
                 deliver memorable experiences.
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-4">
+              <div className="mt-6 sm:mt-8 flex flex-wrap gap-3 sm:gap-4">
                 <button
                   type="button"
                   onClick={() => scrollToSection("events")}
-                  className="rounded-xl bg-pink-500 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-pink-500/30 transition hover:-translate-y-0.5 hover:bg-pink-400"
+                  className="rounded-xl bg-pink-500 px-4 py-2.5 sm:px-6 sm:py-3.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-pink-500/30 transition hover:-translate-y-0.5 hover:bg-pink-400"
                 >
                   Explore Events
                 </button>
                 <Link
                   to="/login"
-                  className="rounded-xl border border-white/22 bg-white/6 px-6 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/12"
+                  className="rounded-xl border border-white/22 bg-white/6 px-4 py-2.5 sm:px-6 sm:py-3.5 text-xs sm:text-sm font-bold text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/12"
                 >
                   Create Event
                 </Link>
               </div>
 
-              <div className="mt-10 flex flex-wrap gap-3">
+              <div className="mt-6 sm:mt-10 flex flex-wrap gap-2 sm:gap-3">
                 {heroHighlights.map((item) => (
                   <div
                     key={item}

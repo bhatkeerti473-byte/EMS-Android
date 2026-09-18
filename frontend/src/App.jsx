@@ -14,6 +14,7 @@ import VerifyEmail from "./pages/VerifyEmail"; // --- IMPORTED NEW PAGE LINK HER
 import CompletedEventDetails from "./pages/CompletedEventDetails";
 import EventBookingForm from "./pages/EventBookingForm";
 import GuestRSVP from "./pages/GuestRSVP";
+import SplashScreen from "./components/SplashScreen";
 
 // Main User Dashboard Components
 import Dashboard from "./user-dashboard/pages/Dashboard";
@@ -131,11 +132,15 @@ function RoleProtectedRoute({ allowedRoles, children }) {
 }
 
 function App() {
+  const [showSplash, setShowSplash] = React.useState(true);
+
   return (
-    <Routes>
-      {/* --- Public Routes --- */}
-      <Route path="/" element={<Navigate to="/home" replace />} />
-      <Route path="/home" element={<Home />} />
+    <>
+      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+      <Routes>
+        {/* --- Public Routes --- */}
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/home" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -508,6 +513,7 @@ function App() {
       {/* --- Fallback Catch-All Route --- */}
       <Route path="*" element={<Navigate to="/home" replace />} />
     </Routes>
+    </>
   );
 }
 

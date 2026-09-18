@@ -40,7 +40,7 @@ const VerifyEmail = () => {
     }, [token]);
 
     return (
-        <div className="min-h-screen flex bg-[#0a0f24] font-sans items-center justify-center p-6 relative overflow-hidden">
+        <div className="min-h-screen flex bg-[#0a0f24] font-sans items-center justify-center p-6 relative overflow-y-auto py-8">
             {/* Background Concert Image with Overlay to match style guide */}
             <div className="absolute inset-0 z-0">
                 <img

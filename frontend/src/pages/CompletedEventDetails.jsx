@@ -135,7 +135,7 @@ export default function CompletedEventDetails() {
     };
 
     return (
-        <div className="max-h-screen min-h-screen overflow-hidden bg-[#f5f1ec] flex flex-col">
+        <div className="min-h-screen overflow-y-auto bg-[#f5f1ec] flex flex-col">
             {/* Header */}
             <div className="border-b border-black/5 bg-white shrink-0">
                 <div className="mx-auto max-w-[1440px] px-6 py-4 flex items-center justify-between">
@@ -153,7 +153,7 @@ export default function CompletedEventDetails() {
             </div>
 
             {/* Main Container Viewport */}
-            <div className="flex-1 mx-auto w-full max-w-[1440px] px-6 py-5 overflow-hidden">
+            <div className="flex-1 mx-auto w-full max-w-[1440px] px-6 py-5 overflow-y-auto">
                 {/* Changed layout context to items-stretch to enforce identical box sizing layout */}
                 <div className="grid gap-5 lg:grid-cols-[1.1fr_1fr_1.1fr] h-full items-stretch">
 

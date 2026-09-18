@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import AndroidBackButton from "../components/AndroidBackButton";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
@@ -101,31 +102,32 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#020617]">
-      <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-[35px] p-10 shadow-2xl w-full max-w-md">
-        <h2 className="text-3xl font-bold text-white mb-6 text-center">
+    <div className="min-h-screen flex items-center justify-center bg-[#020617] relative px-4 py-8">
+      <AndroidBackButton to="/login" />
+      <div className="bg-white/10 backdrop-blur-2xl border border-white/10 rounded-2xl sm:rounded-[35px] p-5 sm:p-10 shadow-2xl w-full max-w-md">
+        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6 text-center">
           {step === 1 ? "Forgot Password" : "Reset Password"}
         </h2>
 
         {/* Step 1: Requesting OTP Form */}
         {step === 1 && (
           <form onSubmit={handleRequestOtp}>
-            <label className="block text-white mb-3 text-lg">Email</label>
+            <label className="block text-white mb-1.5 text-xs sm:text-sm font-medium">Email</label>
             <input
               type="email"
-              className="w-full px-4 py-3 mb-4 bg-transparent border border-white/20 rounded-2xl text-white placeholder:text-gray-400 outline-none"
+              className="w-full px-3.5 py-2.5 mb-3.5 bg-transparent border border-white/20 rounded-xl text-white placeholder:text-gray-400 text-sm outline-none focus:border-blue-400"
               placeholder="Enter your email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               autoComplete="username"
               disabled={loading}
             />
-            {error && <div className="bg-red-600 text-white px-4 py-2 rounded-xl mb-4 text-center font-semibold">{error}</div>}
-            {message && <div className="bg-green-600 text-white px-4 py-2 rounded-xl mb-4 text-center font-semibold">{message}</div>}
+            {error && <div className="bg-red-600/80 text-white px-3 py-2 rounded-xl mb-3 text-center text-xs font-semibold">{error}</div>}
+            {message && <div className="bg-green-600/80 text-white px-3 py-2 rounded-xl mb-3 text-center text-xs font-semibold">{message}</div>}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-90 transition py-3 rounded-2xl text-white font-bold text-lg mt-2 shadow-lg disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-90 transition py-2.5 sm:py-3 rounded-xl text-white font-semibold text-sm sm:text-base mt-1 shadow-lg disabled:opacity-50"
             >
               {loading ? "Sending..." : "Send Reset Link"}
             </button>
@@ -135,36 +137,36 @@ const ForgotPassword = () => {
         {/* Step 2: Entering OTP & New Password Form */}
         {step === 2 && (
           <form onSubmit={handleResetPassword}>
-            <label className="block text-white mb-2 text-lg">Verification Code</label>
+            <label className="block text-white mb-1.5 text-xs sm:text-sm font-medium">Verification Code</label>
             <input
               type="text"
               maxLength="6"
               autoComplete="one-time-code"
-              className="w-full px-4 py-3 mb-4 bg-transparent border border-white/20 rounded-2xl text-white placeholder:text-gray-400 text-center tracking-widest font-bold text-xl outline-none"
+              className="w-full px-3.5 py-2.5 mb-3.5 bg-transparent border border-white/20 rounded-xl text-white placeholder:text-gray-400 text-center tracking-widest font-bold text-lg outline-none focus:border-blue-400"
               placeholder="Enter 6-digit OTP"
               value={otp}
               onChange={e => setOtp(e.target.value)}
               disabled={loading}
             />
 
-            <label className="block text-white mb-2 text-lg">New Password</label>
+            <label className="block text-white mb-1.5 text-xs sm:text-sm font-medium">New Password</label>
             <input
               type="password"
               autoComplete="new-password"
-              className="w-full px-4 py-3 mb-4 bg-transparent border border-white/20 rounded-2xl text-white placeholder:text-gray-400 outline-none"
+              className="w-full px-3.5 py-2.5 mb-3.5 bg-transparent border border-white/20 rounded-xl text-white placeholder:text-gray-400 text-sm outline-none focus:border-blue-400"
               placeholder="Enter new password"
               value={newPassword}
               onChange={e => setNewPassword(e.target.value)}
               disabled={loading}
             />
 
-            {error && <div className="bg-red-600 text-white px-4 py-2 rounded-xl mb-4 text-center font-semibold">{error}</div>}
-            {message && <div className="bg-green-600 text-white px-4 py-2 rounded-xl mb-4 text-center font-semibold">{message}</div>}
+            {error && <div className="bg-red-600/80 text-white px-3 py-2 rounded-xl mb-3 text-center text-xs font-semibold">{error}</div>}
+            {message && <div className="bg-green-600/80 text-white px-3 py-2 rounded-xl mb-3 text-center text-xs font-semibold">{message}</div>}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-green-600 to-emerald-500 hover:opacity-90 transition py-3 rounded-2xl text-white font-bold text-lg mt-2 shadow-lg disabled:opacity-50"
+              className="w-full bg-gradient-to-r from-green-600 to-emerald-500 hover:opacity-90 transition py-2.5 sm:py-3 rounded-xl text-white font-semibold text-sm sm:text-base mt-1 shadow-lg disabled:opacity-50"
             >
               {loading ? "Updating..." : "Reset Password"}
             </button>
