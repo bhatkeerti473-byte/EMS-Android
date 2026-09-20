@@ -16,7 +16,9 @@ import {
   Heart,
   Users,
   Bell,
-  Sparkles
+  Sparkles,
+  X,
+  ShieldCheck
 } from "lucide-react";
 
 import PremiumLogo from "../../../components/PremiumLogo/PremiumLogo";
@@ -268,6 +270,23 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [expandedMenus, setExpandedMenus] = useState({});
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const handleToggle = () => setIsMobileOpen(prev => !prev);
+    const handleClose = () => setIsMobileOpen(false);
+    window.addEventListener("toggle-ems-sidebar", handleToggle);
+    window.addEventListener("close-ems-sidebar", handleClose);
+    return () => {
+      window.removeEventListener("toggle-ems-sidebar", handleToggle);
+      window.removeEventListener("close-ems-sidebar", handleClose);
+    };
+  }, []);
+
+  // Automatically close sidebar when navigating to a new route
+  useEffect(() => {
+    setIsMobileOpen(false);
+  }, [location.pathname]);
 
   const menuItems = [
     { label: "Overview", icon: LayoutGrid, path: "/client/dashboard" },
@@ -435,16 +454,45 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="premium-sidebar">
-      <div className="sidebar-logo flex items-center gap-3" style={{ padding: '20px 16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <PremiumLogo size="50px" />
-        <div style={{ textAlign: "left" }}>
-          <p className="text-lg font-black uppercase tracking-[0.18em] golden-text-animate" style={{ margin: 0, lineHeight: 1.2 }}>Event</p>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] golden-text-animate" style={{ margin: 0, lineHeight: 1.2 }}>
-            Management System
-          </p>
+    <>
+      {isMobileOpen && (
+        <div 
+          className="sidebar-backdrop" 
+          onClick={() => setIsMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+      <aside className={`premium-sidebar ${isMobileOpen ? "is-mobile-open" : ""}`}>
+        <div className="sidebar-logo flex items-center justify-between" style={{ padding: '16px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <PremiumLogo size="44px" />
+            <div style={{ textAlign: "left" }}>
+              <p className="text-base font-black uppercase tracking-[0.16em] golden-text-animate" style={{ margin: 0, lineHeight: 1.2 }}>Event</p>
+              <p className="text-[9px] font-semibold uppercase tracking-[0.25em] golden-text-animate" style={{ margin: 0, lineHeight: 1.2 }}>
+                Management System
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="mobile-sidebar-close-btn"
+            onClick={() => setIsMobileOpen(false)}
+            title="Close Menu"
+            style={{
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.15)",
+              color: "#cbd5e1",
+              borderRadius: "8px",
+              padding: "6px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center"
+            }}
+          >
+            <X size={18} />
+          </button>
         </div>
-      </div>
 
       <div style={{ padding: "0 16px", color: "#64748b", fontSize: "10px", fontWeight: "700", letterSpacing: "1px", marginBottom: "8px" }}>
         CLIENT MODULE
@@ -463,6 +511,28 @@ const Sidebar = () => {
         </div>
       </div>
 
+      <div style={{ padding: "0 16px 10px" }}>
+        <Link 
+          to="/admin-login" 
+          onClick={() => setIsMobileOpen(false)}
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            padding: '12px 16px', 
+            color: '#fbbf24', 
+            textDecoration: 'none', 
+            fontSize: '13px', 
+            fontWeight: '600', 
+            borderRadius: '8px', 
+            background: 'rgba(251, 191, 36, 0.08)', 
+            border: "1px solid rgba(251, 191, 36, 0.25)" 
+          }}
+        >
+          <ShieldCheck size={18} style={{ marginRight: '12px', color: '#fbbf24' }} />
+          Admin Portal Login
+        </Link>
+      </div>
+
       <div style={{ padding: "0 16px 20px" }}>
         <a href="#" onClick={(e) => { e.preventDefault(); handleLogout(); }} style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', color: '#cbd5e1', textDecoration: 'none', fontSize: '13px', fontWeight: '500', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', border: "1px solid rgba(255,255,255,0.05)" }}>
           <LogOut size={18} style={{ marginRight: '12px' }} />
@@ -470,6 +540,7 @@ const Sidebar = () => {
         </a>
       </div>
     </aside>
+    </>
   );
 };
 

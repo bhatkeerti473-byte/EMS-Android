@@ -5792,3 +5792,561 @@
     width: 100% !important;
   }
 }
+
+/* ═════════════════════════════════════════════════════════════════
+   MOBILE RESPONSIVENESS & DRAWER SIDEBAR FOR PHONES / ANDROID APP
+   ═════════════════════════════════════════════════════════════════ */
+
+/* Desktop defaults for mobile drawer items */
+.mobile-sidebar-close-btn {
+  display: none !important;
+}
+.sidebar-backdrop {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  /* Layout Root */
+  .premium-dashboard {
+    position: relative !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+  }
+
+  /* Slide-Out Drawer Sidebar */
+  .premium-sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 290px !important;
+    max-width: 86vw !important;
+    height: 100vh !important;
+    z-index: 99999 !important;
+    transform: translateX(-100%) !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.5) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .premium-sidebar.is-mobile-open {
+    transform: translateX(0) !important;
+  }
+
+  .mobile-sidebar-close-btn {
+    display: flex !important;
+  }
+
+  /* Dark Backdrop */
+  .sidebar-backdrop {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.65) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    z-index: 99990 !important;
+    animation: fadeIn 0.2s ease-out !important;
+  }
+
+  /* Main Container Takes 100% Mobile Width */
+  .premium-main {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    flex: 1 !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Mobile Topbar */
+  .premium-topbar {
+    padding: 10px 14px !important;
+    gap: 8px !important;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .topbar-left {
+    gap: 10px !important;
+  }
+
+  .topbar-left h1 {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+  }
+
+  .hamburger {
+    width: 22px !important;
+    height: 22px !important;
+    cursor: pointer !important;
+    color: #1e293b !important;
+  }
+
+  .topbar-center {
+    display: none !important;
+  }
+
+  .topbar-date {
+    display: none !important;
+  }
+
+  .topbar-profile .name {
+    display: none !important;
+  }
+
+  .topbar-profile .avatar {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 13px !important;
+  }
+
+  /* Content Scroll Area */
+  .premium-content-scroll {
+    padding: 12px 12px 60px !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Page Headers */
+  .page-header {
+    padding: 6px 4px 0 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .page-header h2 {
+    font-size: 1.25rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 2px !important;
+  }
+
+  .page-header p {
+    font-size: 12px !important;
+  }
+
+  /* Horizontal Scrollable Stepper */
+  .stepper-wrapper {
+    overflow-x: auto !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    padding: 8px 4px 12px !important;
+    margin: 6px 0 14px !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .stepper-wrapper::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .stepper-line-bg, 
+  .stepper-line-active {
+    display: none !important;
+  }
+
+  .step-point {
+    flex-shrink: 0 !important;
+    width: 64px !important;
+  }
+
+  .step-circle {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 12px !important;
+  }
+
+  .step-label-point {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 12px !important;
+  }
+
+  .step-label {
+    font-size: 10px !important;
+    text-align: center !important;
+    line-height: 1.2 !important;
+    white-space: normal !important;
+    margin-top: 4px !important;
+  }
+
+  /* Calendar Layout Stacks on Mobile */
+  .calendar-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .calendar-main {
+    width: 100% !important;
+    padding: 12px !important;
+    box-sizing: border-box !important;
+    border-radius: 12px !important;
+  }
+
+  .calendar-sidebar {
+    width: 100% !important;
+    margin-top: 4px !important;
+    box-sizing: border-box !important;
+  }
+
+  .calendar-header {
+    margin-bottom: 12px !important;
+  }
+
+  .calendar-header h3 {
+    font-size: 16px !important;
+    margin: 0 8px !important;
+  }
+
+  .cal-today-btn {
+    position: static !important;
+    margin-left: auto !important;
+    padding: 4px 10px !important;
+    font-size: 11px !important;
+  }
+
+  .calendar-grid {
+    gap: 2px !important;
+  }
+
+  .cal-weekday {
+    font-size: 11px !important;
+    padding: 6px 0 !important;
+  }
+
+  .cal-day-cell {
+    height: 38px !important;
+    font-size: 13px !important;
+  }
+
+  .calendar-legend {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    font-size: 11px !important;
+    margin-top: 14px !important;
+    padding-top: 10px !important;
+  }
+
+  /* Dashboard Cards & KPIs */
+  .kpi-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .kpi-card {
+    padding: 14px !important;
+    border-radius: 12px !important;
+  }
+
+  .kpi-value {
+    font-size: 18px !important;
+  }
+
+  .welcome-banner {
+    padding: 16px !important;
+    border-radius: 12px !important;
+    margin-bottom: 16px !important;
+  }
+
+  .welcome-content h2 {
+    font-size: 18px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .welcome-content p {
+    font-size: 12px !important;
+  }
+
+  .premium-dashboard-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+
+  /* Header Navigation Tabs Bar */
+  .header-nav-tabs {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    padding: 8px 12px 10px !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    white-space: nowrap !important;
+    width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  .header-nav-tabs::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .header-nav-tab-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 6px 12px !important;
+    border-radius: 20px !important;
+    border: 1px solid #e2e8f0 !important;
+    background: #f8fafc !important;
+    color: #475569 !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+  }
+
+  .header-nav-tab-btn:hover {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  .header-nav-tab-btn.active {
+    background: #ea580c !important;
+    color: #ffffff !important;
+    border-color: #ea580c !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 8px rgba(234, 88, 12, 0.3) !important;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     DECOMPRESS CARDS & COMPONENTS ACROSS ALL WIZARD PAGES ON MOBILE
+     ═══════════════════════════════════════════════════════════════ */
+
+  /* Remove crushing desktop side paddings on mobile */
+  .venue-container,
+  .event-type-container-new,
+  .decoration-page,
+  .catering-container,
+  .additional-services-page {
+    padding: 0 8px 32px !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Select Venue - Hosting Options: 2 balanced columns on mobile */
+  .extra-options-row {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .option-card {
+    flex: none !important;
+    width: 100% !important;
+    padding: 12px 10px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
+    border-radius: 12px !important;
+  }
+
+  .option-card.small-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  .option-icon-bg {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .option-content {
+    width: 100% !important;
+  }
+
+  .option-content h5 {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    margin: 0 0 3px !important;
+  }
+
+  .option-content p {
+    font-size: 11px !important;
+    line-height: 1.3 !important;
+    color: #64748b !important;
+    margin: 0 0 8px !important;
+  }
+
+  .option-content .btn-solid {
+    padding: 7px 10px !important;
+    font-size: 11px !important;
+    width: 100% !important;
+    text-align: center !important;
+    border-radius: 8px !important;
+  }
+
+  .starting-from {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border-radius: 6px !important;
+  }
+
+  /* Venue Filter Bar on Mobile */
+  .filter-bar {
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border-radius: 12px !important;
+  }
+
+  .filter-bar .search-wrapper {
+    width: 100% !important;
+  }
+
+  .filter-dropdowns {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+    width: 100% !important;
+  }
+
+  .filter-group {
+    width: 100% !important;
+  }
+
+  .filter-group select {
+    width: 100% !important;
+    font-size: 12px !important;
+    padding: 8px 10px !important;
+  }
+
+  .btn-reset {
+    grid-column: span 2 !important;
+    width: 100% !important;
+    text-align: center !important;
+    padding: 8px !important;
+  }
+
+  /* VENUE CARDS: FULL WIDTH 1-COLUMN ON MOBILE (NO COMPRESSION!) */
+  .venue-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-bottom: 24px !important;
+  }
+
+  .venue-card {
+    width: 100% !important;
+    border-radius: 16px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    overflow: hidden !important;
+  }
+
+  .venue-image-wrapper {
+    height: 180px !important;
+    width: 100% !important;
+  }
+
+  .venue-image-wrapper img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .venue-info {
+    padding: 14px !important;
+  }
+
+  .venue-title-row h4 {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+  }
+
+  /* EVENT TYPE: FULL WIDTH CARDS ON MOBILE */
+  .trending-events-grid,
+  .events-browse-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .t-event-card {
+    width: 100% !important;
+    border-radius: 14px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* DECORATION PAGE: STACK 2-COLUMN SUMMARY & 1-COLUMN MAIN */
+  .decoration-page > div[style*="gridTemplateColumns"] {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 16px !important;
+  }
+
+  .decoration-page div[style*="repeat(5, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 12px 14px !important;
+  }
+
+  .decoration-catalog-grid,
+  .theme-cards-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }
+
+  /* CATERING: STACK 1-COLUMN COMBOS & PLATES */
+  .food-type-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .plates-combo-layout {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+
+  .combo-cards-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  /* ADDITIONAL SERVICES: 1-COLUMN ON MOBILE */
+  .services-grid,
+  .dj-cards-grid,
+  .transport-cards-grid,
+  .room-cards-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }
+}
+
+

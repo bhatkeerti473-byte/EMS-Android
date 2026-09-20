@@ -227,7 +227,7 @@ const EventType = () => {
           </div>
 
 
-          <div className="event-type-container-new" style={{ padding: "0 32px 32px" }}>
+          <div className="event-type-container-new px-2 sm:px-8 pb-8">
             
             {/* Trending Event Types */}
             <div className="section-header-flex">

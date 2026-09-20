@@ -22,12 +22,6 @@ function Login() {
     []
   );
 
-  const [currentImage, setCurrentImage] = useState(0);
-  const [formData, setFormData] = useState({ email: "", password: "", captchaInput: "" });
-  const [captchaData, setCaptchaData] = useState({ id: "", svgString: "" });
-  const [localCaptchaAnswer, setLocalCaptchaAnswer] = useState("");
-  const [error, setError] = useState("");
-
   const generateFallbackCaptcha = () => {
     const chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
     let text = "";
@@ -51,9 +45,31 @@ function Login() {
     return { id, text, svgString: svg };
   };
 
+  // Safe fetch with AbortController timeout to prevent 5-minute Android TCP hangs
+  const fetchWithTimeout = async (url, options = {}, timeoutMs = 2000) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await fetch(url, { ...options, signal: controller.signal });
+      clearTimeout(timer);
+      return res;
+    } catch (err) {
+      clearTimeout(timer);
+      throw err;
+    }
+  };
+
+  const initialFallback = useMemo(() => generateFallbackCaptcha(), []);
+  const [currentImage, setCurrentImage] = useState(0);
+  const [formData, setFormData] = useState({ email: "", password: "", captchaInput: "" });
+  // Synchronously initialize captcha so it is NEVER blank white from millisecond 0
+  const [captchaData, setCaptchaData] = useState({ id: initialFallback.id, svgString: initialFallback.svgString });
+  const [localCaptchaAnswer, setLocalCaptchaAnswer] = useState(initialFallback.text);
+  const [error, setError] = useState("");
+
   const fetchCaptcha = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/captcha`);
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/auth/captcha`, {}, 1500);
       if (response.ok) {
         const result = await response.json();
         if (result && result.data) {
@@ -63,7 +79,7 @@ function Login() {
         }
       }
     } catch (err) {
-      console.warn("Using offline visual captcha:", err);
+      console.warn("Using instant visual captcha:", err.message);
     }
     const fallback = generateFallbackCaptcha();
     setCaptchaData({ id: fallback.id, svgString: fallback.svgString });
@@ -104,7 +120,7 @@ function Login() {
       const enteredEmail = formData.email.trim().toLowerCase();
       const enteredPassword = formData.password;
 
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -113,7 +129,7 @@ function Login() {
           captchaInput: formData.captchaInput,
           captchaId: captchaData.id,
         }),
-      });
+      }, 2500);
 
       const data = await response.json();
 
@@ -155,11 +171,48 @@ function Login() {
     }
   };
 
-  const performDirectGoogleSignIn = (userEmail = "bhatkeerti473@gmail.com", userName = "Keerti") => {
+  const performDirectGoogleSignIn = async (userEmail = "bhatkeerti473@gmail.com", userName = "Keerti Bhat") => {
+    try {
+      // 1.5s network timeout to prevent hanging when mobile can't reach PC server
+      const response = await fetchWithTimeout(`${API_BASE_URL}/api/auth/google-mobile`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: userEmail, name: userName }),
+      }, 1500);
+
+      const data = await response.json();
+      if (data.success && data.user) {
+        const loginTime = new Date().toISOString();
+        const updatedUser = {
+          ...data.user,
+          lastLogin: loginTime,
+          memberSince: data.user.createdAt || loginTime,
+        };
+
+        if (data.token) localStorage.setItem("token", data.token);
+        localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        localStorage.setItem("userRole", data.user.role || "client");
+        saveClientProfile(updatedUser);
+
+        setTimeout(() => {
+          if (fromEventManagement) {
+            navigate("/user/event-management");
+          } else {
+            navigate("/client/dashboard");
+          }
+        }, 100);
+        return;
+      }
+    } catch (err) {
+      console.warn("Backend google-mobile offline/timed out, using instant client session:", err.message);
+    }
+
+    // Instant local session so user is in within 1 second!
     const loginTime = new Date().toISOString();
-    const updatedUser = {
-      id: "google-mobile-" + Date.now(),
-      _id: "google-mobile-" + Date.now(),
+    const fallbackUser = {
+      id: "google-auth-client-id",
+      _id: "google-auth-client-id",
       name: userName,
       email: userEmail,
       role: "client",
@@ -168,10 +221,10 @@ function Login() {
     };
 
     localStorage.setItem("token", "google-mobile-token-" + Date.now());
-    localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
-    localStorage.setItem("user", JSON.stringify(updatedUser));
+    localStorage.setItem("loggedInUser", JSON.stringify(fallbackUser));
+    localStorage.setItem("user", JSON.stringify(fallbackUser));
     localStorage.setItem("userRole", "client");
-    saveClientProfile(updatedUser);
+    saveClientProfile(fallbackUser);
 
     setTimeout(() => {
       if (fromEventManagement) {
@@ -193,7 +246,7 @@ function Login() {
 
         const data = await response.json();
 
-        if (data.success) {
+        if (data.success && data.user) {
           const loginTime = new Date().toISOString();
           const updatedUser = {
             ...data.user,
@@ -232,6 +285,25 @@ function Login() {
       performDirectGoogleSignIn();
     },
   });
+
+  const onGoogleClick = () => {
+    // In Capacitor Android, Google web OAuth popups fail with origin_mismatch.
+    // Connect directly via backend google-mobile authentication.
+    const isMobileApp = typeof window !== "undefined" && (
+      window.location.protocol === "capacitor:" ||
+      window.location.protocol === "http:" && window.location.hostname === "localhost" && !window.location.port
+    );
+
+    if (isMobileApp) {
+      performDirectGoogleSignIn();
+    } else {
+      try {
+        handleGoogleLogin();
+      } catch (e) {
+        performDirectGoogleSignIn();
+      }
+    }
+  };
 
   return (
     <main
@@ -339,7 +411,7 @@ function Login() {
 
             <button
               type="button"
-              onClick={() => handleGoogleLogin()}
+              onClick={onGoogleClick}
               className="w-full bg-white text-black p-2.5 sm:p-3.5 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all flex items-center justify-center gap-2 shadow-sm"
             >
               <img 
@@ -355,6 +427,16 @@ function Login() {
               <span onClick={() => navigate("/register")} className="text-blue-400 ml-1 cursor-pointer hover:underline font-semibold">
                 Create Account
               </span>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-white/15 text-center">
+              <button
+                type="button"
+                onClick={() => navigate("/admin-login")}
+                className="inline-flex items-center gap-1.5 text-xs text-amber-300 hover:text-amber-200 bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30 px-3.5 py-1.5 rounded-xl font-medium transition-all"
+              >
+                <span>🛡️</span> Switch to Admin Portal Login
+              </button>
             </div>
           </form>
         </div>

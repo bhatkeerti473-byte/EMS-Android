@@ -279,7 +279,7 @@ const SelectVenue = () => {
           </div>
 
 
-          <div className="venue-container" style={{ padding: "0 32px 32px" }}>
+          <div className="venue-container px-2 sm:px-8 pb-8">
             
             {/* Filter Bar */}
             <div className="filter-bar">

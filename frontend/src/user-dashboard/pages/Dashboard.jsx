@@ -257,12 +257,12 @@ const Dashboard = () => {
               <h2 style={{ fontSize: "28px", fontWeight: "bold", color: "#0f172a", marginBottom: "8px" }}>Welcome back, {clientName}! 👋</h2>
               <p style={{ color: "#475569", fontSize: "14px" }}>Here's what's happening with your events & budget-friendly packages.</p>
             </div>
-            <div style={{ position: "absolute", right: "20px", top: "20px", zIndex: 1 }}>
+            <div className="hidden md:block" style={{ position: "absolute", right: "20px", top: "20px", zIndex: 1 }}>
               <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=300&q=80" alt="Event Special" style={{ width: "200px", borderRadius: "12px", border: "4px solid white", transform: "rotate(3deg)", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1)" }} />
             </div>
           </div>
             
-          <div className="kpi-grid" style={{ gridTemplateColumns: "repeat(4, 1fr)", gap: "24px", marginBottom: "24px" }}>
+          <div className="kpi-grid">
             {/* Total Bookings */}
             <div className="kpi-card" style={{ height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "20px", background: "white", borderRadius: "16px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
               <div>
@@ -440,7 +440,7 @@ const Dashboard = () => {
 
           {/* EVENT COUNTDOWN BLOCK */}
           {nextEvent && (
-            <div className="countdown-wrapper mb-8 mx-8">
+            <div className="countdown-wrapper mb-8 mx-0 sm:mx-8">
               <div className="countdown-card" style={{ background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)", color: "white", padding: "24px", borderRadius: "16px", boxShadow: "0 10px 25px -5px rgba(0,0,0,0.2)", position: "relative", overflow: "hidden" }}>
                 
                 <div style={{ position: "absolute", top: "-50px", right: "-50px", width: "150px", height: "150px", borderRadius: "50%", background: "rgba(255,255,255,0.05)" }}></div>

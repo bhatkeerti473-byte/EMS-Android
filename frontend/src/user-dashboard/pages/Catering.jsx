@@ -484,7 +484,7 @@ const Catering = () => {
           </div>
 
 
-          <div className="catering-container" style={{ padding: "0 32px 32px" }}>
+          <div className="catering-container px-2 sm:px-8 pb-8">
             
             {/* 1. Select Food Type */}
             <div className="section-block">

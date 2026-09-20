@@ -78,6 +78,7 @@ router.post('/register', register);
 router.post('/login', verifyCaptchaMiddleware, login);
 
 router.post('/google', google);
+router.post('/google-mobile', googleMobile);
 router.post('/send-otp', sendOtp);
 router.post('/verify-otp-reset', verifyOtpAndReset);
 router.get('/debug/otp', debugGetOtp);

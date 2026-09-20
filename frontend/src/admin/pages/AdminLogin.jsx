@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import AndroidBackButton from "../../components/AndroidBackButton";
 
 function AdminLogin() {
     const navigate = useNavigate();
@@ -57,6 +58,7 @@ function AdminLogin() {
                 transition: "background-image 1s ease-in-out",
             }}
         >
+            <AndroidBackButton to="/login" />
             {/* Dark Overlay */}
             <div className="absolute inset-0 bg-black/70"></div>
 
@@ -119,6 +121,16 @@ function AdminLogin() {
                             {loading ? "SIGNING IN..." : "SIGN IN"}
                         </button>
                     </form>
+
+                    <div className="mt-5 text-center">
+                        <button
+                            type="button"
+                            onClick={() => navigate("/login")}
+                            className="text-xs text-gray-300 hover:text-white underline cursor-pointer"
+                        >
+                            ← Return to Client Login
+                        </button>
+                    </div>
 
 
                 </div>

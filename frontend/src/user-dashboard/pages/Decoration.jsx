@@ -582,7 +582,7 @@ const Decoration = () => {
             </div>
           </div>
 
-          <div className="decoration-page" style={{ padding: "0 32px 40px" }}>
+          <div className="decoration-page px-2 sm:px-8 pb-10">
             
             {/* TOP SUMMARY BAR */}
             <div style={{
